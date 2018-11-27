@@ -1,0 +1,223 @@
+.rd_body{
+.rd_sen_left{
+  padding-left: 20px;
+
+  .active{
+    background: $fontColorBlue;
+    color: white;
+
+  }
+  div{
+    width: 100%;
+    height: 50px;
+    border-top-left-radius:8px;
+    border-bottom-left-radius: 8px;
+    border: 1px solid  $fontColorBlue;
+    border-bottom: none;
+    line-height: 50px;
+    text-align: center;
+    cursor: pointer;
+    color: #C4C4C4;
+    border-right:none ;
+
+  }
+  div:last-child{
+    border-bottom: 1px solid  $fontColorBlue;
+  }
+
+}
+  .rd_sen_right{
+
+    .sa_bot{
+      margin-right: 20px;
+      border: 1px solid  $fontColorBlue;
+      min-height: 400px;
+    }
+
+    .Premises_body{
+      padding-top: 20px;
+      padding-bottom: 20px;
+      .el-form-item__content{
+       /* margin-left: 135px !important;*/
+      }
+      .el-form-item{
+        margin-bottom: 0px;
+        .el-form-item__label{
+          color: #999999;
+          padding-right: 30px;
+        }
+      }
+      .car_width{
+        .el-form-item{
+          width: 150px;
+          float: left;
+          .el-form-item__label{
+            width: auto !important;
+            text-align: left;
+          }
+          .el-form-item__content{
+            margin-left: 20px !important;
+          }
+        }
+      }
+    }
+    .mesfi_body{
+      .il_details_body{
+        margin-top: 10px ;
+        padding-left: 10px;
+        .el-tabs__nav-scroll{
+          background: white;
+        }
+      }
+    }
+    .inspor_body{
+
+      .om_list{
+        margin-top: 30px;
+        width: 32%;
+        margin-left: 1%;
+        border: 1px solid #ebf5fe;
+        -webkit-box-shadow: 5px 5px 10px #cde5fd;
+        box-shadow: 5px 5px 10px #cde5fd;
+        height: 580px;
+        position: relative;
+        float: left;
+        .comDetails{
+          margin-top: 0px;
+          .title{
+            font-size: 18px;
+            line-height: 18px;
+            padding: 15px;
+          }
+          .om_list_layer{
+            height: 175px;
+            border-bottom: 1px solid rgba(70, 160, 252, 0.2);
+            h3{
+              font-size: 18px;
+              padding-top: 20px;
+              padding-left: 20px;
+              padding-right: 20px;
+              width: 100%;
+              overflow: hidden;
+              text-overflow:ellipsis;
+              white-space: nowrap;
+            }
+            span{
+              font-size: 14px;
+              line-height: 28px;
+              color: #999999;
+              padding-left: 50px;
+            }
+            p{
+              font-size: 14px;
+              line-height: 24px;
+              padding-right: 20px;
+              color: #333333;
+              padding-left: 50px;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+              overflow: hidden;
+              a{
+                color: #fdb839;
+              }
+            }
+            p:last-child{
+              margin-top: 10px;
+            }
+          }
+        }
+        .om_list_more{
+          font-size: 14px;
+          text-align: right;
+          position: absolute;
+          right: 10px;
+        }
+      }
+      .inspor_top{
+        width: 23%;
+        float: left;
+        margin-left: 20px;
+        margin-top: 20px;
+        height: 100px;
+        border: 1px solid #ebf5fe;
+        box-shadow: 5px 5px 10px #cde5fd;
+        border-radius: 4px;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 15px;
+        color: #111111;
+        p{
+          font-size: 18px;
+          span{
+            font-size: 14px;
+            color: #999999;
+            float: right;
+            line-height: 24px;
+            big{
+              color: #111111;
+              font-size: 24px;
+              padding-left: 5px;
+            }
+          }
+        }
+        p:last-child{
+          font-size: 36px;
+          color: $fontColorBlue;
+        }
+      }
+      .ib_region{
+        height: 280px;
+        #regionBar{
+          height: 280px;
+          padding: 0 30px;
+        }
+      }
+      @media screen  and ( max-width: 1919px ) {
+        .inspor_top{
+          width: 47%;
+        }
+      }
+      .el-col:last-child .inspor_top{
+        margin-right: 20px;
+      }
+    }
+    .inspor_body_more{
+      .om_list{
+        margin-top: 10px;
+        width: 98%;
+        height: 825px;
+        .title{
+          background: $fontColorBlue;
+          color: white;
+          .v-line{
+            background: white;
+          }
+        }
+      }
+    }
+    .inspor_body_details{
+      .om_list{
+        height: auto !important;
+      }
+      .om_list_layer{
+        height: auto !important;
+        div{
+          display: inline;
+          p{
+            float: right;
+          }
+          span{
+            float: left;
+          }
+        }
+        .list_p{
+          clear: both;
+          margin-top: 10px;
+          margin-bottom: 10px;
+        }
+      }
+    }
+
+  }
+}

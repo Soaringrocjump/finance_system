@@ -1,0 +1,195 @@
+.index-content{
+  position: fixed;
+  top: 50px;
+  width: 100%;
+  height: calc(100% - 50px);
+  background: green;
+  .scroll-box{
+    width: calc(100% - 16.1458vw);
+    position: absolute;
+    height: 100%;
+    background: #001528;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {display:none}
+    .el-scrollbar{
+      
+    }
+    .content-box{
+      padding: 20px 30px;
+      .comBox{
+        background: $themeColor;
+        border-radius: 10px;
+        padding-bottom: 15px;
+        min-height:280px;
+        .title{
+          height: 64px;
+          padding: 15px 20px;
+          h2{
+            font-size: 24px;
+            span{
+              font-size: 14px;
+              color: #46a0fc;
+            }
+          }
+          a{
+            font-size: 14px;
+            color: #46a0fc;
+            padding-top: 12px;
+            transition: .3s all;
+            &:hover{
+              color: #1470cc;
+            }
+          }
+        }
+        .el-table{
+          background: transparent;
+          border: 0;
+          &::before{
+            height: 0;
+          }
+        }
+        .moreBtn{
+          padding: 3px 12px;
+          background: #46a0fc;
+          font-size: 12px;
+          border: none;
+          transition: .3s all;
+          &:hover{
+            background: #1470cc;
+          }
+        }
+      }
+      .chartBox{
+        min-height: 670px;
+        background: $themeColor;
+        border-radius: 10px;
+        margin-top: 20px;
+        .title{
+          border-bottom: 1px solid #1b3a57;
+          padding: 0 20px;
+          line-height: 64px;
+          font-size: 24px;
+        }
+        #ningboMap{
+          position: relative;
+          padding: 25px;
+          height: 600px;
+        }
+        #ringPie{
+          padding: 0 30px;
+          height: 250px;
+        }
+        #regionBar{
+          padding: 0 30px;
+          height: 350px;
+        }
+      }
+    }
+    
+  }
+  .right_sidebar{
+    width: 16.1458vw;
+    background: $themeColor;
+    height: 100%;
+    float: right;
+    color: #fff;
+    .adminBox{
+      padding: 42px 20px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #1b3a57;
+      .adminInfo{
+        margin-left: 20px;
+        line-height: 1.8;
+        .name{
+          font-size: 18px;
+        }
+        .date{
+          font-size: 14px;
+        }
+      }
+    }
+    .frequentUse{
+      padding: 3px 20px 50px;
+      border-bottom: 1px solid #1b3a57;
+      h2{
+        line-height: 54px;
+        font-size: 24px;
+      }
+      .entranceBox{
+        display: block;
+        height: 70px;
+        line-height: 70px;
+        border-radius: 5px;
+        text-align: center;
+        margin-top: 30px;
+        i{
+          font-size: 30px;
+          vertical-align: middle;
+        }
+        span{
+          display: inline-block;
+          width: 115px;
+          font-size: 18px;
+        }
+      }
+      .monitor{background: #46a0fc;}
+      .bigData{background: #ffb73a;}
+    }
+    .newPush{
+      padding: 3px 20px 35px;
+      h2{
+        line-height: 54px;
+        font-size: 24px;
+      }
+      .pushList{
+        li{
+          margin-bottom: 40px;
+          font-size: 14px;
+          h3{
+            line-height: 1.6;
+            margin-bottom: 15px;
+            display:-webkit-box !important;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            -webkit-box-orient:vertical;
+            -webkit-line-clamp:2;
+          }
+          .type-more{
+            .risk{
+              width: 60px;
+              height: 20px;
+              line-height: 18px;
+              font-size: 12px;
+              text-align: center;
+              border-radius: 20px;
+            }
+            .risk1{
+              border: 1px solid #46a0fc;
+              background: rgba(70, 160, 252, 0.2);
+              color: #46a0fc;
+            }
+            .risk2{
+              border: 1px solid #ff724b;
+              background: rgba(255, 114, 75, 0.2);
+              color: #ff724b;
+            }
+            .risk3{
+              border: 1px solid #ff5361;
+              background: rgba(255, 83, 97, 0.2);
+              color: #ff5361;
+            }
+            .more{
+              color: #46a0fc;
+              text-decoration: underline;
+              transition: .3s all;
+              &:hover{
+                color: #1470cc;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
