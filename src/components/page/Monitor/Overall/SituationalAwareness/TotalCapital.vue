@@ -8,6 +8,7 @@
             <ningbo-map
               :displayMode="rightDisplayMode"
               :regions="regions"
+              componentId="3"
               @listenerChangeDisplayMode="changeRightDisplayMode"
               @listenerChangeSelectedRegionName="changeSelectedRegionName"
               ref="bodyRight"
@@ -19,7 +20,7 @@
         <div class="iob_right">
           <div class="title">各区县资金分布</div>
           <div>
-            <div id="gqxzjfbPie" style="width: 380px; height:100%; min-height: 500px;">
+            <div id="gqxzjfbPie" style="width: 100%; height:100%; min-height: 500px;">
             </div>
           </div>
         </div>
@@ -46,7 +47,9 @@
 
 <script>
   import echarts from 'echarts';
+  // import NingboMap from "@/components/module/ningboMap";
   import NingboMap from "./ningboMap";
+  import Ajax from "@/components/common/util";
 
   let regions = [
     {name: '海曙区', company_count: 0, risk: 60},
@@ -72,6 +75,8 @@
     components: {NingboMap},
     data() {
       return {
+        pieList:[],
+        pieListTit:[],
         // 当前地图选中的地区
         selectedRegionName: '',
         // 右边模块显示模式(risk和count，代表风险模式和数量模式)
@@ -245,9 +250,7 @@
             orient: 'horizontal',
             bottom: '0',
             itemWidth: 14,
-            data: ['海洋科技城','保税区','鄞州区','杭州湾新区','余姚市',
-              '慈溪市','江北区','海曙区','高新区','镇海区',
-              '北仑区','奉化区','宁海县','象山县','大榭']
+            data: this.pieListTit
           },
           series : [
             {
@@ -256,23 +259,7 @@
               bottom: '0px',
               radius : '50%',
               center: ['50%', '40%'],
-              data:[
-                {value:82, name:'海洋科技城'},
-                {value:27, name:'保税区'},
-                {value:21, name:'鄞州区'},
-                {value:11, name:'杭州湾新区'},
-                {value:9, name:'余姚市'},
-                {value:8, name:'慈溪市'},
-                {value:6, name:'江北区'},
-                {value:6, name:'海曙区'},
-                {value:5, name:'高新区'},
-                {value:4, name:'镇海区'},
-                {value:4, name:'北仑区'},
-                {value:3, name:'奉化区'},
-                {value:3, name:'宁海县'},
-                {value:2, name:'象山县'},
-                {value:1, name:'大榭'},
-              ],
+              data:this.pieList,
               color:[
                 '#CC2D2D',
                 '#FFE066',
@@ -303,10 +290,61 @@
 
         let myPieChart = echarts.init(document.getElementById('gqxzjfbPie'));
         myPieChart.setOption(pieOption);
+      },
+      getPieList(){
+        Ajax(
+          {
+            method:'post',
+            url:'regioncount/selectMoneyDistribution',
+          }
+        ).then(result => {
+          if (result.data.resultCode != "200") alert("错误：" + msg.message);
+          var msg = !this.$common.isNull(result.data.data)
+            ? result.data.data
+            : "";
+
+          for (let i=0;i<msg.length;i++){
+            this.pieListTit.push(msg[i].areaReal);
+            this.pieList.push({value:msg[i].amount ,name: msg[i].areaReal});
+
+          }
+          console.log(this.pieListTit);
+          console.log(this.pieList);
+          this.drawPie();
+        })
+          .catch(err => {
+            alert("错误：获取数据异常" + err);
+          });
+
+      },
+      /*平台资金总量排行榜*/
+      getRightList(){
+        Ajax(
+          {
+            method:'post',
+            url:'moneycount/selectTotalMoneyList',
+          }
+        ).then(result => {
+
+          if (result.data.resultCode != "200") alert("错误：" + msg.message);
+          var msg = !this.$common.isNull(result.data.data)
+            ? result.data.data
+            : "";
+          console.log(msg);
+          for (let i=0;i<msg.length;i++){
+            this.ytlxRanking[i].name=msg[i].name;
+            this.ytlxRanking[i].num=msg[i].total
+          }
+
+        })
+          .catch(err => {
+            alert("错误：获取数据异常" + err);
+          });
       }
     },
     mounted() {
-      this.drawPie();
+      this.getPieList();
+      this.getRightList();
     }
 
   }

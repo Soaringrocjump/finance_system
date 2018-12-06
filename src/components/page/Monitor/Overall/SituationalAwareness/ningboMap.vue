@@ -7,15 +7,21 @@
       <div style="float: right;">
         <div class="annotation">
           <div class="left color-1"></div>
-          <div class="right">50家以上</div>
+          <div class="right" v-if="componentId === '1'">50家以上</div>
+          <div class="right" v-else-if="componentId === '2'">50,000人以上</div>
+          <div class="right" v-else-if="componentId === '3'">10,000万元以上</div>
         </div>
         <div class="annotation">
           <div class="left color-2"></div>
-          <div class="right">20-50家</div>
+          <div class="right" v-if="componentId === '1'">20-50家</div>
+          <div class="right" v-else-if="componentId === '2'">10,000-50,000人</div>
+          <div class="right" v-else-if="componentId === '3'">1,000-10,000万元</div>
         </div>
         <div class="annotation">
           <div class="left color-3"></div>
-          <div class="right">20家以下</div>
+          <div class="right" v-if="componentId === '1'">20家以下</div>
+          <div class="right" v-else-if="componentId === '2'">1,000-10,000万元</div>
+          <div class="right" v-else-if="componentId === '3'">1,000万元以下</div>
         </div>
       </div>
       <div id="map-nb"></div>
@@ -35,7 +41,9 @@ export default {
         // 显示模式
         'displayMode',
         // 地区数据
-        'regions'
+        'regions',
+        //标签卡id
+        'componentId'
     ],
     data(){
         return {

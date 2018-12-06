@@ -506,7 +506,7 @@ export default {
             riskDetail: '集体上访',
             state: '已核查',
             result: '属实',
-            feedback: '3/3', 
+            feedback: '3/3',
             checkDetail: '',
             checkDate: '2018-10-24'
           },
@@ -516,7 +516,7 @@ export default {
             riskDetail: '',
             state: '已核查',
             result: '属实',
-            feedback: '3/3', 
+            feedback: '3/3',
             checkDetail: '',
             checkDate: ''
           },
@@ -526,7 +526,7 @@ export default {
             riskDetail: '法人变更',
             state: '全部退回',
             result: '不属实',
-            feedback: '3/1', 
+            feedback: '3/1',
             checkDetail: '',
             checkDate: ''
           },
@@ -536,7 +536,7 @@ export default {
             riskDetail: '',
             state: '已核查',
             result: '属实',
-            feedback: '3/3', 
+            feedback: '3/3',
             checkDetail: '处理详情处理详情',
             checkDate: ''
           }
@@ -667,7 +667,5 @@ export default {
     .el-dialog__footer .el-button+.el-button {
       margin-left: 40px;
     }
-    .el-table .cell, .el-table th div{
-      padding: 0!important;
-    }
+
 </style>

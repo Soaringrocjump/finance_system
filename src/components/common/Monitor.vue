@@ -73,6 +73,14 @@ export default {
                   {
                     index: 'skymonitoring',
                     title: '天罗监测'
+                  },
+                  {
+                    index: 'groundMonitoring',
+                    title: '地网监测'
+                  },
+                  {
+                    index: 'riskMonitoring',
+                    title: '风险监测'
                   }
                 ]
               },
@@ -127,9 +135,9 @@ export default {
         ])
     },
     methods: {
-        // ...mapMutations([
-        //     "collapseChage"
-        // ])
+        ...mapMutations([
+            "collapseChage"
+        ])
     }
 }
 </script>

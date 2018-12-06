@@ -119,10 +119,10 @@
           width="55">
         </el-table-column>
         <el-table-column  type="index"  :index="indexMethod" label="序号" width="95" ></el-table-column>
-        <el-table-column  prop="company_name" label="机构名称" width="640" >
+        <el-table-column   label="机构名称" width="640" >
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small" style="text-decoration: underline;cursor: pointer;color: #333;">
-              {{scope.row.company_name}}
+              {{scope.row.companyName}}
             </el-button>
           </template>
         </el-table-column>
@@ -132,9 +132,14 @@
           width="140">
 
         </el-table-column>
-        <el-table-column prop="risk_index" label="风险指数" sortable width="140" ></el-table-column>
+        <el-table-column prop="riskWave.riskIndex"  label="风险指数" sortable width="140" empty-text="0" :formatter="formatter">
+
+        </el-table-column>
+
+
+        <!--<el-table-column v-else label="风险指数" sortable width="140" >0</el-table-column>-->
         <el-table-column
-          prop="business_type"
+          prop="businessType"
           label="业务类型"
           width="140">
 
@@ -143,7 +148,6 @@
           prop="area"
           label="辖区归属"
           width="140">
-
         </el-table-column>
         <el-table-column prop="organizational" label="组织形式" sortable width="140"></el-table-column>
         <el-table-column label="操作">
@@ -157,7 +161,7 @@
       background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="pagebegin"
+      :current-page="pageNum"
       :page-size="pageSize"
       layout=" prev, pager, next ,jumper"
       :total="total">
@@ -175,55 +179,64 @@
           return {
             loading: true,
             total: 0,
-            pagebegin: 1,
+            pageNum: 1,
             pageSize: 10,
-            activeName: 'first',
-            it_list: [],
+            businessType: '',
+            area: '',
+            organizational: '',
+            isBlackOrGrey: '',
+            status: '',
+            warningLevel: '',
+            it_list: [
+            ],
           };
         },
 
         methods: {
           indexMethod(index) {
-            return this.pageSize * (this.pagebegin - 1) + index + 1;
+            return this.pageSize * (this.pageNum - 1) + index + 1;
+          },
+          formatter(row, column) {
+
+            return row.riskWave.riskIndex==null?0:row.riskWave.riskIndex;
           },
           /*机构列表*/
-          getInstitutions: function(pagebegin,pageSize) {
-            var self = this;
-            var authorization = sessionStorage.getItem("authorization"); //sessionStorage里取出token;
-            var url = this.HOME + "company/companySearch";
-            var qs = require('qs');
-            this.$axios
-              .post(url,
-                qs.stringify({ pagebegin: pagebegin,pagesize:pageSize }),
-                {
+          getInstitutions: function(pageNum,pageSize) {
+            this.$axios({
+              method: "post",
+              url: this.HOME +"company/getList",
               headers: {
-                authorization: authorization,
-              }
-            })
-              .then(function (res) {
-                console.info(res.data.data.list);
-                self.loading = false;
-                self.it_list = res.data.data.list;
-                self.total = res.data.data.total;
-
+                token: sessionStorage.getItem("authorization"),
+                "content-type": "application/json;charset=UTF-8"
+              },
+              data: JSON.stringify({
+                pageNum: this.pageNum,
+                pageSize: this.pageSize
               })
-              .catch(function (error) {
+            })
+            .then( res => {
+              this.loading = false;
+              this.it_list = res.data.data.list;
+              this.total = res.data.data.total;
+            })
+            .catch(function (error) {
               console.log(error)
             })
           },
           //分页
           handleSizeChange(val) {
             this.pageSize = val;
-            this.pagebegin = 1;
+            this.pageNum = 1;
             this.getInstitutions(1, this.pageSize);
           },
           handleCurrentChange(val) {
-            this.pagebegin = val;
+            this.pageNum = val;
             this.getInstitutions(val, this.pageSize);
           },
           handleClick(index) {
             const uuid=index.uuid;
-            this.$router.push({ path: '/InstitutionsListDetails', query: {id: uuid}});
+            const creditCode=index.creditCode;
+            this.$router.push({ path: '/InstitutionsListDetails', query: {id: uuid,creditCode:creditCode}});
 
           },
 

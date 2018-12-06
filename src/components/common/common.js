@@ -1,3 +1,4 @@
+
 export default {
     isNull: function (v) {
         return (v == undefined || v == null || v == "undefined" || v === "null" || v === "" || (typeof v == "number" && "NaN" === (v + "")));
@@ -28,28 +29,13 @@ export default {
         }
         return JSON.parse(user);
     },
-    getCode:function () {
-        let codeDep=[];
-        this.$axios({
-          method: "post",
-          url: this.HOME +"dic/getDepartment",
-          headers: {
-            token: sessionStorage.getItem("authorization"),
-            "content-type": "application/json;charset=UTF-8"
-          },
-          data: JSON.stringify({
-          })
-        })
-          .then(result => {
-            if (result.data.resultCode != "200") alert("错误：" + msg.message);
-            var msg = !this.$common.isNull(result.data.data)
-              ? result.data.data
-              : "";
-
-
-          })
-          .catch(err => {
-            alert("错误：获取数据异常" + err);
-          });
+    getValue:function (dates,departmentid) {
+      let departmentname="";
+      for(let i=0; i<dates.length;i++){
+        if(departmentid==dates[i].code){
+          departmentname=  dates[i].name;
+        }
+      }
+      return departmentname;
     }
 }

@@ -4,15 +4,26 @@
 </template>
 
 <script>
+  import {dqArray} from '@/components/common/codes';
+  // 地区
+  let searchDq = dqArray;
 export default {
   name: 'regionBar',
-//   props:['xAxisName','seriesData'],
+  props: {
+    chartList:{
+      type:Array,
+      default: []
+    },
+  },
   data(){
     return {
-        xAxisName:['海曙区', '鄞州区', '江北区', '奉化', '慈溪市', '宁海县', '东钱湖', '高新区', '镇海区', '余姚市', '象山县', '保税区', '北仑区', '大榭', '杭州湾新区', '海洋科技城'],
+        warningList:[],
+        meetingList:[],
+        disposeList:[],
+        xAxisName:searchDq,
         seriesData: [
             {
-                name:'正在预警',
+                name:'预警中的机构',
                 type:'bar',
                 data:[18,21,18,8,9,6,6,7,6,5,5,6,6,6,10,10],
                 itemStyle: {
@@ -22,7 +33,7 @@ export default {
                 barMaxWidth: 10,  //柱宽
                 barGap: 0  //柱间距
             },{
-                name:'已推送正在核查',
+                name:'会商中的机构',
                 type:'bar',
                 data:[70,30,25,22,22,10,18,10,18,18,18,6,12,6,6,21],
                 itemStyle: {
@@ -33,7 +44,7 @@ export default {
                 barGap: 0
             },
             {
-                name:'已核查反馈',
+                name:'处置中的机构',
                 type:'bar',
                 data:[140,65,45,45,35,35,20,18,21,26,20,20,20,8,8,8],
                 itemStyle: {
@@ -47,6 +58,42 @@ export default {
     }
   },
   methods: {
+  //格式化list，换成本页面可以用的数据
+  formatList(){
+    let area=searchDq;
+    let list=this.chartList;
+
+      for(let i=0;i<area.length;i++){
+        let warningAmonut=0;
+        let meetingAmonut=0;
+        let disposeAmonut=0;
+        for(let j=0;j<list.length;j++){
+          //区域名相等
+          if(list[j].area==area[i]){
+
+            if(list[j].status=='处置中'){
+              disposeAmonut=list[j].amount;
+            }
+            if(list[j].status=='会商中'){
+              meetingAmonut=list[j].amount;
+            }
+            if(list[j].status=='预警中'){
+              warningAmonut=list[j].amount;
+            }
+          }
+        }
+        this.warningList.push(warningAmonut);
+        this.meetingList.push(meetingAmonut);
+        this.disposeList.push(disposeAmonut);
+      }
+
+
+      this.seriesData[0].data= this.warningList;
+      this.seriesData[1].data= this.meetingList;
+      this.seriesData[2].data= this.disposeList;
+      this.drawBar();
+
+  },
     // 绘制柱状图
     drawBar(){
       var myChart = this.$echarts.init(document.getElementById('regionBar'));
@@ -137,7 +184,9 @@ export default {
 
   },
   mounted(){
-    this.drawBar();
+    this.formatList();
+    // this.drawBar();
+
   }
 
 }

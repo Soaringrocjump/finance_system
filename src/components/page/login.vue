@@ -98,7 +98,7 @@
 
 
             </div>
-            <canvas id="chinaMap" width="700" height="500" style="padding-top:12%"></canvas>
+            <canvas id="chinaMap" style="padding-top:12%"></canvas>
           </div>
         </div>
         <div class="container right">
@@ -379,6 +379,9 @@
   import {dataStatistics} from '../../assets/js/jquery.dataStatistics';
   import {tldw} from "../../assets/js/login-tldw";
   import {loadChinaMap} from '../../assets/js/china-map-distribution'
+
+  let intervalId_1 = 0;
+  let intervalId_2 = 0;
 
   function setSum($dsContent, sum, sumLength) {
 
@@ -1040,7 +1043,7 @@
 
 
       echarts.init(document.querySelector("#line")).setOption(option1)
-      setInterval(function () {
+      intervalId_2 = setInterval(function () {
         option1.series[0].data[0].value = (Math.random() * 20).toFixed(1) + 0;
         echarts.init(document.querySelector("#line")).setOption(option1)
       }, 2000);
@@ -1050,7 +1053,7 @@
 
       var asdqwe = 0;
 
-      setInterval(function () {
+      intervalId_1 =  setInterval(function () {
         var qweasd = (asdqwe++) % 3;
         if (qweasd == 0) {
           echarts.init(document.querySelector("#r1")).setOption(xjxcoption)
@@ -1174,6 +1177,10 @@
               sessionStorage.setItem("userId", user.id);
               sessionStorage.setItem("departmentId", user.departmentId);
               self.$router.replace({ path: "/" }); //成功跳转首页
+
+              //销毁相关的setInterval事件
+              clearInterval(intervalId_1);
+              clearInterval(intervalId_2);
             }
 
             if (res.status == "500") {
@@ -1190,13 +1197,12 @@
     }
   }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .login {
   background-size: 100% 100%;
   width: 100%;
   height: 1080px;
   .login_son {
-    margin-top: 20px;
     float: right;
     .el-form-item {
       width: 120px;

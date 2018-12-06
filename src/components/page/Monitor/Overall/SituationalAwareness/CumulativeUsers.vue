@@ -8,6 +8,7 @@
             <ningbo-map
               :displayMode="rightDisplayMode"
               :regions="regions"
+              componentId="2"
               @listenerChangeDisplayMode="changeRightDisplayMode"
               @listenerChangeSelectedRegionName="changeSelectedRegionName"
               ref="bodyRight"
@@ -22,7 +23,7 @@
             <span>全部</span>
           </div>
           <div>
-            <div id="sexAgePie" style="width: 380px; height:100%; min-height: 500px;">
+            <div id="sexAgePie" style="width: 100%; height:100%; min-height: 500px;">
             </div>
           </div>
         </div>
@@ -49,7 +50,9 @@
 
 <script>
   import echarts from 'echarts';
+  // import NingboMap from "@/components/module/ningboMap";
   import NingboMap from "./ningboMap";
+  import Ajax from "@/components/common/util";
 
   let regions = [
     {name: '海曙区', company_count: 0, risk: 60},
@@ -81,7 +84,8 @@
         rightDisplayMode: 'risk',
         // 所有地区数据
         regions: regions,
-        jydfbRanking: [{
+        jydfbRanking: [
+          {
           name: '海洋科技城',
           num: '82',
           barWidth: '82%',
@@ -152,7 +156,8 @@
           barWidth: '2%',
           barColor: '#52a0fc'
         }],
-        ytlxRanking: [{
+        ytlxRanking: [
+          {
           name: '银狐财富',
           num: '500,000',
           barWidth: '100%',
@@ -222,7 +227,11 @@
           num: '5,000',
           barWidth: '1%',
           barColor: '#52a0fc'
-        }]
+        }],
+        pieList:[],
+        pieListTit:[],
+        pieListSexTit:[],
+
       }
     },
     methods: {
@@ -245,7 +254,7 @@
             bottom: '0',
             x: 'center',
             itemWidth: 14,
-            data:['20岁以下','20-29岁','30-39岁','40-49岁','50-59岁','60岁以上']
+            data:this.pieListTit
           },
           series: [
             {
@@ -265,10 +274,7 @@
                   show: false
                 }
               },
-              data:[
-                {value:1548, name:'男性'},
-                {value:867, name:'女性'}
-              ],
+              data:this.pieListSexTit,
               color:[
                 '#03AEFE',
                 '#F7596F'
@@ -280,14 +286,7 @@
               radius: ['40%', '55%'],
               center: ['50%', '40%'],
 
-              data:[
-                {value:335, name:'20岁以下'},
-                {value:310, name:'20-29岁'},
-                {value:234, name:'30-39岁'},
-                {value:135, name:'40-49岁'},
-                {value:1048, name:'50-59岁'},
-                {value:251, name:'60岁以上'},
-              ],
+              data:this.pieList,
               color:[
                 '#FF724B',
                 '#F9BA71',
@@ -302,10 +301,63 @@
 
         let myPieChart = echarts.init(document.getElementById('sexAgePie'));
         myPieChart.setOption(pieOption);
+      },
+      getPieList(){
+        Ajax(
+          {
+            method:'post',
+            url:'regioncount/selectUserSexAndAge',
+          }
+        ).then(result => {
+
+          if (result.data.resultCode != "200") alert("错误：" + msg.message);
+          var msg = !this.$common.isNull(result.data.data)
+            ? result.data.data
+            : "";
+          for(let i=0;i<msg.length;i++){
+            if (msg[i].ageSexDistribution!="男用户" && msg[i].ageSexDistribution!="女用户"){
+              this.pieListTit.push(msg[i].ageSexDistribution);
+              this.pieList.push({value:msg[i].amount ,name: msg[i].ageSexDistribution});
+            }else {
+              this.pieListSexTit.push({value:msg[i].amount ,name: msg[i].ageSexDistribution});
+            }
+
+          }
+          this.drawPie();
+        })
+          .catch(err => {
+            alert("错误：获取数据异常" + err);
+          });
+
+      },
+      /*平台用户数量排行榜*/
+      getRightList(){
+        Ajax(
+          {
+            method:'post',
+            url:'usercount/selectUserCountRank',
+          }
+        ).then(result => {
+
+          if (result.data.resultCode != "200") alert("错误：" + msg.message);
+          var msg = !this.$common.isNull(result.data.data)
+            ? result.data.data
+            : "";
+          console.log(msg);
+          for (let i=0;i<msg.length;i++){
+            this.ytlxRanking[i].name=msg[i].name;
+            this.ytlxRanking[i].num=msg[i].total
+          }
+
+        })
+          .catch(err => {
+            alert("错误：获取数据异常" + err);
+          });
       }
     },
     mounted() {
-      this.drawPie();
+      this.getPieList();
+      this.getRightList();
     }
   }
 </script>

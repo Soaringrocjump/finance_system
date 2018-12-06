@@ -43,7 +43,120 @@
             }
         }
     }
-    
+    .el-button+.el-button {
+      margin-left: 0;
+    }
+}
+//dialog弹框
+.el-dialog{
+    .themeBlue{
+        color: $fontColorBlue !important;
+    }
+    .red{
+        color: #FF5361 !important;
+        padding: 0 3px;
+    }
+    dl{
+        &~dl{margin-top: 20px;}
+        dt{
+            position: relative;
+            line-height: 24px;
+            padding: 10px;
+            font-size: 24px;
+            color: #333;
+            &::before{
+                position: absolute;
+                content: "";
+                left: 0;
+                width: 4px;
+                height: 24px;
+                background: $fontColorBlue;
+            }
+        }
+        dd{
+            .closeDate{
+                border: 1px solid rgba(70, 160, 252, 0.25);
+                color: $fontColorBlue;
+                padding: 3px 5px;
+                border-radius: 3px;
+                margin-right: 10px;
+            }
+            p>span{
+                margin-right: 20px;
+            }
+            .process{
+              position: relative;
+              .v-line{
+                position: absolute;
+                left: 133px;
+                top: 4px;
+                width: 1px;
+                height: 100%;
+                background: #46a0fc;
+              }
+              .date{
+                width: 80px;
+                margin-left: 14px;
+                text-align: center;
+                color: #999;
+                line-height: 2;
+              }
+              .point{
+                width: 15px;
+                height: 15px;
+                border-radius: 50%;
+                padding: 2px;
+                border: 1px solid #46a0fc;
+                background-color:#46a0fc;
+                background-clip:content-box;
+                margin-left: 32px;
+              }
+              .detail{
+                margin-left: 19px;
+                p{
+                    font-size: 14px;
+                    color: #333;
+                    line-height: 2;
+                }
+                big{
+                    font-size: 24px;
+                    color: #46A0FC;
+                    margin-top: 10px;
+                }
+              }
+            }
+        }
+    }
+    .upload-demo{
+        padding: 10px;
+    }
+    .addBtn{
+        display: inline-block;
+        height: 30px;
+        border: 1px solid $fontColorBlue;
+        border-radius: 2px;
+        overflow: hidden;
+        cursor: pointer;
+        .blueBg{
+            width: 30px;
+            height: 28px;
+            line-height: 28px;
+            background: $fontColorBlue;
+            text-align: center;
+            float: left;
+            i{
+                color: #fff;
+                font-size: 24px;
+                line-height: 28px;
+            }
+        }
+        span{
+            font-size: 14px;
+            padding: 0 14px;
+            line-height: 28px;
+            float: left;
+        }
+    }
 }
 
 //机构详情
@@ -63,7 +176,7 @@
             width: 130px;
             height: 40px;
             line-height: 40px;
-            background: #C4C4C4;
+            background: #46a0fc;
             color: #fff;
             text-align: center;
             font-size: 18px;
@@ -73,6 +186,15 @@
             width: 13.65vw;
             height: 2px;
             border: 1px dashed #C4C4C4;
+        }
+        .stepGoing{
+            background: #ffb73a;
+        }
+        .stepOver{
+            background: #46a0fc;
+        }
+        .stepGoing~.step,.stepOver~.step{
+            background: #C4C4C4;
         }
     }
     .comTop,.comDetails{
@@ -84,6 +206,7 @@
         position: relative;
         .stamp{
             position: absolute;
+            width: 200px;
             left: 370px;
             top: 50%;
             transform: translateY(-50%) rotate(-30deg);
@@ -100,9 +223,10 @@
             }
             span{
                 display: inline-block;
-                width: 100px;
+                min-width: 100px;
                 height: 30px;
                 line-height: 30px;
+                padding: 0 10px;
                 font-size: 18px;
                 color: #fff;
                 text-align: center;
@@ -151,6 +275,7 @@
     }
     .comDetails{
         margin-top: 20px;
+        padding-bottom: 20px;
         .title{
             padding: 20px;
             color: #333;
@@ -173,6 +298,7 @@
             }
             .right{
                 font-size: 18px;
+                color: $fontColorBlue;
             }
             .red{
                 color: #FF5361 !important;
@@ -227,14 +353,19 @@
             }
         }
         .riskTab{
-            padding: 0 20px 30px;
+            padding: 0 20px;
         }
         .describeCont{
             padding: 20px;
             font-size: 14px;
+            h2{
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
         }
         .addRow,.upload-demo{
-            padding: 20px;
+            margin-top: 20px;
+            margin-left: 20px;
             .addBtn{
                 display: inline-block;
                 height: 30px;
@@ -268,86 +399,117 @@
             color: $fontColorBlue;
             text-decoration: underline;
         }
-        .el-dialog{
-            .themeBlue{
-                color: $fontColorBlue !important;
+        .consDetailTable{
+            th{
+                background:#ecf5ff;
+                color:#333;
+                padding:10px 0;
+                text-align:center;
+                font-size:18px;
+                font-weight:normal;
             }
-            .red{
-                color: #FF5361 !important;
-                padding: 0 3px;
+            td{
+                padding:10px 0;
+                text-align:center;
+                font-size: 14px;
+                border-bottom:1px solid rgba(70, 160, 252, 0.2);
             }
-            dl{
-                &~dl{margin-top: 20px;}
-                dt{
-                    position: relative;
-                    line-height: 24px;
-                    padding: 10px;
-                    font-size: 24px;
-                    color: #333;
-                    &::before{
-                        position: absolute;
-                        content: "";
-                        left: 0;
-                        width: 4px;
-                        height: 24px;
-                        background: $fontColorBlue;
-                    }
-                }
-                dd{
-                    .closeDate{
-                        border: 1px solid rgba(70, 160, 252, 0.25);
-                        color: $fontColorBlue;
-                        padding: 3px 5px;
-                        border-radius: 3px;
-                        margin-right: 10px;
-                    }
-                    p>span{
-                        margin-right: 20px;
-                    }
-                }
-            }
-            .upload-demo{
-                padding: 10px;
-            }
-            .addBtn{
-                display: inline-block;
-                height: 30px;
-                border: 1px solid $fontColorBlue;
-                border-radius: 2px;
-                overflow: hidden;
-                cursor: pointer;
-                .blueBg{
-                    width: 30px;
-                    height: 28px;
-                    line-height: 28px;
-                    background: $fontColorBlue;
-                    text-align: center;
-                    float: left;
-                    i{
-                        color: #fff;
-                        font-size: 24px;
-                        line-height: 28px;
-                    }
-                }
-                span{
-                    font-size: 14px;
-                    padding: 0 14px;
-                    line-height: 28px;
-                    float: left;
-                }
+            th:nth-child(4),td:nth-child(4){
+                text-align:left;
             }
         }
-        .disposeBox{
-            padding: 30px 0;
-            text-align: center;
-            .el-button{
-                width: 200px;
-                height: 50px;
-                font-size: 18px;
-            }
-            .el-button~.el-button {
-                margin-left: 40px;
-            }
+        .riskPoint{
+            padding: 20px;
+            font-size: 14px;
+            color: #333;
+            line-height: 2;
         }
+    }
+    .endTime{
+        font-size: 14px;
+        color: #333;
+        line-height: 3;
+        text-align: center;
+    }
+    .disposeBox{
+        padding: 30px 0;
+        text-align: center;
+        background: #fff;
+        margin-top: 20px;
+        border-radius: 5px;
+        .el-button{
+            width: 200px;
+            height: 50px;
+            font-size: 18px;
+        }
+        .el-button~.el-button {
+            margin-left: 40px;
+        }
+    }
+    .receiptBox{
+        padding: 30px 0;
+        text-align: center;
+        background: #fff;
+        border-radius: 5px;
+        .el-button{
+            width: 200px;
+            height: 50px;
+            font-size: 18px;
+        }
+        .el-button~.el-button {
+            margin-left: 40px;
+        }
+    }
+}
+
+//dialog弹框
+.dialogBody{
+    .el-dialog__header{
+      background: $fontColorBlue;
+      color: #fff;
+      padding-top: 10px;
+    }
+    .el-dialog__title {
+      color: #fff;
+    }
+    .el-dialog--center {
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .el-dialog--center .el-dialog__body {
+      padding: 40px 50px 40px;
+    }
+    .el-textarea__inner{
+      border: 1px solid $fontColorBlue !important;
+    }
+    .el-checkbox-button{
+      margin: 0 12px 10px 0;
+    }
+    .el-checkbox-button__inner {
+      border: 1px solid $fontColorBlue;
+      border-radius: 3px;
+      color: $fontColorBlue;
+    }
+    .el-checkbox-button:first-child .el-checkbox-button__inner,.el-checkbox-button:last-child .el-checkbox-button__inne{
+      border: 1px solid $fontColorBlue !important;
+      border-radius: 3px !important;
+    }
+    .el-checkbox-button--small .el-checkbox-button__inner{
+      border-radius: 3px !important;
+    }
+    .el-dialog__footer {
+      padding: 10px 20px 50px;
+    }
+    .el-dialog__footer .el-button{
+      width: 200px;
+      padding: 16px 20px;
+      font-size: 18px;
+    }
+    .el-dialog__footer .cancel{
+      background: #c4c4c4 !important;
+      color: #fff;
+    }
+    .el-dialog__footer .el-button+.el-button {
+      margin-left: 40px;
     }
 }

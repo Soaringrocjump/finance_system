@@ -1,24 +1,28 @@
-  <!-- 机构详情 -->
+  <!-- 机构详情 created by zp -->
 <template>
   <div class="warn-content orgDetails">
       <div class="crumbs display-flex justify-content-space-between align-items-center">
         <div>
-          <span class="state">预警中</span>-<span class="name">{{comInfo.name}}</span>
+          <span class="state">{{comInfo.status}}</span>-<span class="name">{{comInfo.companyName}}</span>
         </div>
-        <router-link go="-1">
+        <div @click="$router.go(-1)" style="cursor:pointer">
           <i class="iconfont icon-liebiao1"></i><span class="">返回列表</span>
-        </router-link>
+        </div>
       </div>
       <div class="stepBox display-flex justify-content-space-around align-items-center">
-        <div class="step">预警</div>
+        <div :class="[comInfo.status == '预警中' ? 'stepGoing' : '']" class="step">预警</div>
         <div class="line"></div>
-        <div class="step">核查</div>
+        <div v-if="comInfo.status == '核查中'"  class="step stepGoing">核查</div>
+        <div v-else-if="comInfo.status == '已核查'" class="step stepOver">核查</div>
+        <div v-else class="step">核查</div>
         <div class="line"></div>
-        <div class="step">会商</div>
+        <div v-if="comInfo.status == '会商中'"  class="step stepGoing">会商</div>
+        <div v-else-if="comInfo.status == '已会商'" class="step stepOver">会商</div>
+        <div v-else class="step">会商</div>
         <div class="line"></div>
-        <div class="step">处置</div>
+        <div :class="[comInfo.status == '处置中' ? 'stepGoing' : '']" class="step">处置</div>
       </div>
-      <org-top :orgTopInfo="comInfo">
+      <org-top :orgTopInfo="company" :riskIndex="comInfo.riskIndex">
 
       </org-top>
       <div class="comDetails">
@@ -28,35 +32,35 @@
         <div class="basicInfo">
           <table width="100%" border="0">
             <tr>
-              <td width="8%">法人代表</td>
-              <td colspan="4"><big>{{comInfo.legalName}}</big></td>
+              <td width="12%">法人代表</td>
+              <td colspan="4"><big>{{company.legalName}}</big></td>
             </tr>
             <tr>
               <td>社会信用代码</td>
-              <td width="38%">{{comInfo.credit}}</td>
-              <td width="8%">公司状态</td>
-              <td width="27%"><span class="themeBlue">{{comInfo.comState}}</span></td>
-              <td width="19%" rowspan="4">
+              <td width="30%">{{company.creditCode}}</td>
+              <td width="12%">公司状态</td>
+              <td width="26%"><span class="themeBlue">{{company.remark}}</span></td>
+              <td width="20%" rowspan="4">
                 <div class="comLogoBox"></div>
               </td>
             </tr>
             <tr>
               <td>注册日期</td>
-              <td>{{comInfo.regDate}}</td>
+              <td>{{company.registTime}}</td>
               <td>注册资本</td>
-              <td>{{comInfo.regCapital}}</td>
+              <td>{{company.capital}}</td>
             </tr>
             <tr>
               <td>营业期限</td>
-              <td>{{comInfo.businessTerm}}</td>
+              <td>{{company.businessStart}}—{{company.businessEnd}}</td>
               <td>实缴资本</td>
-              <td>{{comInfo.paidCapital}}</td>
+              <td>{{company.realpayment}}</td>
             </tr>
             <tr>
               <td>注册地址</td>
-              <td>{{comInfo.regAddress}}</td>
+              <td>{{company.address}}</td>
               <td>实际经营地址</td>
-              <td>{{comInfo.operateAddress}}<a class="themeBlue">地图</a></td>
+              <td>{{company.companyReal}}<a class="themeBlue">地图</a></td>
             </tr>
           </table>
         </div>
@@ -74,8 +78,8 @@
         </div>
         <div class="riskTab">
           <el-tabs type="card" tab-position="left" v-model="activeTab">
-            <el-tab-pane v-for="item in comInfo.partRiskLine" :label="item.name" :key="item.key" :name="item.key">
-              <risk-analysis v-if="item.key == activeTab" :riskLineData="comInfo.partRiskLine[item.key]"></risk-analysis>
+            <el-tab-pane v-for="item in partRiskLine" :label="item.name" :key="item.key" >
+              <risk-analysis v-if="item.key == activeTab" :riskLineData="partRiskLine[item.key]"></risk-analysis>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -85,165 +89,156 @@
           <div class="left">风险描述</div>
         </div>
         <div class="describeCont">
-          风险描述风险描述风险描述风险描述风险描述风险描述风险描述风险描述风险描述风险描述风险描述风险描述风险描述风险描述
+          {{comInfo.description}}
         </div>
       </div>
       <div class="comDetails">
         <div class="title display-flex justify-content-space-between align-items-center">
           <div class="left">风险点</div>
-          <div class="right">核查总进度0/5</div>
+          <div class="right">核查总进度{{comInfo.hasBackRisk}}/{{comInfo.totalRisk}}</div>
         </div>
-        <div class="riskPoint">
-          <el-table :data="comInfo.riskPointData" style="width: 100%" :header-cell-style="headerCellStyle" :row-style="rowStyle" :cell-style="cellStyle" >
-            <el-table-column type="index" label="序号" min-width="50"></el-table-column>
-            <el-table-column prop="Title" label="风险点" min-width="120"></el-table-column>
-            <el-table-column prop="description" label="风险详情" min-width="210"></el-table-column>
-            <el-table-column prop="status" label="状态" min-width="80"></el-table-column>
-            <el-table-column prop="results" label="核查结果" min-width="80"></el-table-column>
-            <el-table-column prop="feedback" label="反馈进度" min-width="80"></el-table-column>
-            <el-table-column prop="checkDetail" label="核查详情" min-width="240"></el-table-column>
-            <el-table-column prop="Create_Time" label="核查时间" min-width="90"></el-table-column>
-            <el-table-column label="操作" min-width="130">
+        <div class="">
+          <el-table :data="comInfo.warningRisks" style="width: 100%" :header-cell-style="headerCellStyle" :row-style="rowStyle" :cell-style="cellStyle" >
+            <el-table-column type="index" label="序号" width="60"></el-table-column>
+            <el-table-column prop="title" label="风险点" min-width="120"></el-table-column>
+            <el-table-column prop="description" label="风险详情" min-width="150"></el-table-column>
+            <el-table-column prop="status" label="状态" min-width="70">
               <template slot-scope="scope">
-                <el-button size="mini" @click="comInfo.DialogBox.check = true">核查</el-button>
-                <!--核查-->
-                <el-dialog title="核查" :visible.sync="comInfo.DialogBox.check" width="40%" center :show-close="false" :modal-append-to-body="false" :close-on-click-modal="false">
-                  <dl >
-                    <dt class="display-flex align-items-center">需要核查的风险点</dt>
-                    <dd>
-                      <p><span class="themeBlue">集体上访</span></p>
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt>工作要求</dt>
-                    <dd>
-                      <p>截止日期<span class="red">*</span><span class="closeDate">2018-09-29</span><span class="closeDate">16:30</span>15天（默认）</p>
-                      <el-input type="textarea" :rows="4" placeholder="请输入工作要求（选填）" style="margin-top:10px;"></el-input>
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt>主送单位<span class="red">*</span></dt>
-                    <dd>
-                      <el-checkbox-group v-model="checkboxGroup1" size="small">
-                        <el-checkbox-button v-for="item in unit" :label="item" :key="item.index">{{item}}</el-checkbox-button>
-                      </el-checkbox-group>
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt>抄送单位</dt>
-                    <dd>
-                      <el-checkbox-group v-model="checkboxGroup2" size="small">
-                        <el-checkbox-button v-for="item in unit" :label="item" :key="item.index">{{item}}</el-checkbox-button>
-                      </el-checkbox-group>
-                    </dd>
-                  </dl>
-                  <span slot="footer" class="dialog-footer">
-                    <el-button class="cancel" @click="comInfo.DialogBox.check = false">取消</el-button>
-                    <el-button class="confirm" type="primary" @click="comInfo.DialogBox.check = false">发起核查</el-button>
-                  </span>
-                </el-dialog>
-                <!--核查-->
-                <el-button size="mini"  @click="comInfo.DialogBox.confirm = true">确认</el-button>
-                <!--确认-->
-                <el-dialog title="确认" :visible.sync="comInfo.DialogBox.confirm" width="40%" center :show-close="false" :modal-append-to-body="false" :close-on-click-modal="false">
-                  <dl >
-                    <dt class="display-flex align-items-center">正在确认的风险点</dt>
-                    <dd>
-                      <p><span class="themeBlue">集体上访</span></p>
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt>核查结果<span class="red">*</span></dt>
-                    <dd>
-                      <p>
-                        <el-radio v-model="radio" label="1">属实</el-radio>
-                        <el-radio v-model="radio" label="2">不属实</el-radio>
-                        <el-radio v-model="radio" label="3" disabled>退回</el-radio>
-                      </p>
-                      <el-input class="placeholder_n" type="textarea" :rows="4" :placeholder="placeholder_n" style="margin-top:10px;"></el-input>
-                    </dd>
-                  </dl>
-                  <el-upload
-                    class="upload-demo"
-                    style="padding-left:0"
-                    action=""
-                    :before-remove="beforeRemove"
-                    multiple
-                    :limit="3"
-                    :on-exceed="handleExceed"
-                    :file-list="fileList">
-                    <div class="addBtn clearfix">
-                      <div class="blueBg">
-                        <i class="el-icon-plus"></i>
-                      </div>
-                      <span>添加图片/附件</span>
-                    </div>
-                    <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                  </el-upload>
-                  <span slot="footer" class="dialog-footer">
-                    <el-button class="cancel" @click="comInfo.DialogBox.confirm = false">取消</el-button>
-                    <el-button class="confirm" type="primary" @click="comInfo.DialogBox.confirm = false">发起核查</el-button>
-                  </span>
-                </el-dialog>
-                <!--确认-->
+                <span v-if="scope.row.status == '待处理'" class="warning">{{scope.row.status}}</span>
+                <span v-else-if="scope.row.status == '待核查'" class="warning">{{scope.row.status}}</span>
+                <span v-else-if="scope.row.status == '待反馈'" class="warning">{{scope.row.status}}</span>
+                <span v-else-if="scope.row.status == '已核查'" class="primary">{{scope.row.status}}</span>
+                <span v-else-if="scope.row.status == '有退回||超时退回'" class="danger">{{scope.row.status}}</span>
+                <span v-else>{{scope.row.status}}</span>
+                <!-- <span >{{scope.row.status}}</span> -->
+              </template>
+            </el-table-column>
+            <el-table-column label="核查结果" min-width="90">
+              <template slot-scope="scope">
+                <span v-if="scope.row.result == '不属实'" class="danger"><i class="el-icon-circle-check"></i>{{scope.row.result}}</span>
+                <span v-else-if="scope.row.result == '属实'" class="primary"><i class="el-icon-circle-check"></i>{{scope.row.result}}</span>
+                <span v-else>{{scope.row.result}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column  label="反馈进度" min-width="90">
+              <template slot-scope="scope">
+                <span>{{scope.row.hasBackRiskDown}}/{{scope.row.totalRiskDown}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="decsripent" label="核查详情" min-width="150"></el-table-column>
+            <el-table-column  label="核查时间" min-width="90">
+              <template slot-scope="scope">
+                <span v-if="scope.row.backTime == null">{{scope.row.backTime}}</span>
+                <span v-else>{{scope.row.backTime.substr(0,10)}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" min-width="120">
+              <template slot-scope="scope">
+                <div v-if="departmentId == 38">
+                  <div v-if="scope.row.status == '待处理'">
+                    <el-button  type="primary" size="mini" @click="checkPop(scope.row)">核查</el-button>
+                    <el-button  type="primary" size="mini"  @click="confirmPop(scope.row)">确认</el-button>
+                  </div>
+                  <el-button v-else-if="scope.row.status == '待核查'" type="primary" size="mini" @click="checkDetail(scope.row)">详情</el-button>
+                  <el-button v-else-if="scope.row.status == '已核查'" type="primary" size="mini" @click="checkDetail(scope.row)">详情</el-button>
+                </div>
+                <div v-else>
+                  <div v-if="scope.row.status == '待核查'">
+                    <el-button  type="primary" size="mini" @click="checkConfirmPop(scope.row)">退回</el-button>
+                    <el-button  type="primary" size="mini" @click="checkConfirmPop(scope.row)">确认</el-button>
+                  </div>
+                  <el-button v-else-if="scope.row.status == '已核查'" type="primary" size="mini" @click="checkDetail(scope.row)">详情</el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
         </div>
-        <div class="addRow">
-          <div class="addBtn clearfix" @click="comInfo.DialogBox.addRisk = true">
+        <!-- 金融办账号才显示 -->
+        <div v-if="departmentId == 38" class="addRow">
+          <div v-if="status == '预警中'|| status == '核查中'" class="addBtn clearfix" @click="addRiskPop(warningNo)">
             <div class="blueBg">
               <i class="el-icon-plus"></i>
             </div>
             <span>添加风险点</span>
           </div>
-          <!--添加风险点-->
-          <el-dialog title="添加" :visible.sync="comInfo.DialogBox.addRisk" width="40%" center :show-close="false" :modal-append-to-body="false" :close-on-click-modal="false">
-            <dl >
-              <dt class="display-flex align-items-center">选择风险点<span class="red">*</span></dt>
-              <dd>
-                <p>
-                  <el-select v-model="selRiskPoint" placeholder="请选择">
-                    <el-option
-                      v-for="item in riskPoint"
-                      :key="item.index"
-                      :label="item"
-                      :value="item">
-                    </el-option>
-                  </el-select>
-                </p>
-              </dd>
-            </dl>
-            <dl>
-              <dt>风险详情备注</dt>
-              <dd>
-                <el-input type="textarea" :rows="4" placeholder="选填" style="margin-top:10px;"></el-input>
-              </dd>
-            </dl>
-            <el-upload
-              class="upload-demo"
-              style="padding-left:0"
-              action=""
-              :before-remove="beforeRemove"
-              multiple
-              :limit="3"
-              :on-exceed="handleExceed"
-              :file-list="fileList">
-              <div class="addBtn clearfix">
-                <div class="blueBg">
-                  <i class="el-icon-plus"></i>
-                </div>
-                <span>添加图片/附件</span>
-              </div>
-            </el-upload>
-            <span slot="footer" class="dialog-footer">
-              <el-button class="cancel" @click="comInfo.DialogBox.addRisk = false">取消</el-button>
-              <el-button class="confirm" type="primary" @click="comInfo.DialogBox.addRisk = false">添加</el-button>
-            </span>
-          </el-dialog>
-          <!--添加风险点-->
         </div>
       </div>
+      <div v-if="warningDownForMeet !== null && warningDownForMeet.length > 0" class="comDetails">
+        <div class="title display-flex justify-content-space-between align-items-center">
+          <div class="left">会商详情</div>
+
+          <div v-if="userDownForMeet.departmentId == departmentId" class="right">
+            反馈进度{{userDownForMeet.backCountReady}}/{{userDownForMeet.backCountAll}}
+          </div>
+        </div>
+        <div v-if="departmentId == 38">
+          <table  class="consDetailTable" style="width: 100%">
+            <thead>
+              <tr>
+                <th width="10%">序号</th>
+                <th width="20%">时间</th>
+                <th width="20%">单位</th>
+                <th width="50%">会商详情</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item,index) in warningDownForMeet" :key="index">
+                <td v-if="item.warningBack !== null">{{index + 1}}</td>
+                <td v-if="item.warningBack !== null">{{item.warningBack.backTime | formatterDate}}</td>
+                <td v-if="item.warningBack !== null">{{item.warningBack.departmentId}}</td>
+                <td v-if="item.warningBack !== null">{{item.warningBack.remark}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-if="userDownForMeet.departmentId !== 38" class="riskPoint">
+          <p>{{userDownForMeet.downTime | formatterDate}} 来自 {{userDownForMeet.fromDepartmentId}}</p>
+          <p>{{userDownForMeet.remark}}</p>
+        </div>
+      </div>
+      <p v-if="userDownForMeet.departmentId !== 38 && userDownForMeet.departmentId == departmentId && userDownForMeet.warningBack == null" class="endTime">会商截止日期：{{userDownForMeet.upTime | formatterDate}} 请您尽快回复</p>
+      <div v-if="userDownForMeet.departmentId !== 38 && userDownForMeet.departmentId == departmentId && userDownForMeet.warningBack == null" class="receiptBox">
+        <el-button type="primary" @click="consReceiptPop(userDownForMeet)">会商回执</el-button>
+      </div>
+      <div v-if="warningSummaryForMeet !== null" class="comDetails">
+        <div class="title display-flex align-items-center">
+          <div class="left">会商总结</div>
+        </div>
+        <div class="describeCont">
+            <h2 class="danger">机构状态：{{warningSummaryForMeet.result}}</h2>
+            <p>{{warningSummaryForMeet.remark}}</p>
+        </div>
+      </div>
+      <div v-if="departmentId == 38"> 
+        <div v-if="status == '已核查' || status == '会商中'" class="disposeBox">
+              <el-button type="primary" @click="consultationPop(comInfo)">会商</el-button>
+              <el-button type="primary" @click="dispositionPop(comInfo)">处置</el-button>
+        </div>
+        <div v-if="status == '已会商'" class="disposeBox">
+            <span v-if="warningSummaryForMeet == null">
+              <el-button type="primary" @click="constSumPop(comInfo)">会商总结</el-button>
+            </span>
+              <el-button type="primary" @click="dispositionPop(comInfo)">处置</el-button>
+        </div>
+        <!-- <div v-if="status == '处置中'" class="disposeBox">
+          <el-button type="primary" @click="dispositionPop(comInfo)">处置</el-button>
+        </div> -->
+        <!-- <div v-if="status == '已处置'" class="disposeBox">
+          <el-button type="primary" @click="dispSumPop(comInfo)">处置总结</el-button>
+        </div> -->
+      </div>
+      <!-- 弹框组件 --> 
+      <add-risk-dialog ref="addRiskBox" v-on:reRequest="updatePage"></add-risk-dialog>
+      <check-dialog ref="checkBox" v-on:reRequest="updatePage"></check-dialog>
+      <confirm-dialog ref="confirmBox" v-on:reRequest="updatePage"></confirm-dialog>
+      <confirm-dialog ref="confirmBox" v-on:reRequest="updatePage"></confirm-dialog>
+      <check-detail-dialog ref="checkDetailBox" v-on:reRequest="updatePage" :departmentId="departmentId"></check-detail-dialog>
+      <consultation-dialog ref="consultationBox" v-on:reRequest="updatePage"></consultation-dialog>
+      <disposition-dialog ref="dispositionBox" v-on:reRequest="updatePage"></disposition-dialog>
+      <const-sum-dialog ref="constSumBox" v-on:reRequest="updatePage"></const-sum-dialog>
+      <disp-sum-dialog ref="dispSumBox" v-on:reRequest="updatePage"></disp-sum-dialog>
+      <check-confirm-dialog ref="checkConfirmBox" v-on:reRequest="updatePage" :departmentId="departmentId"></check-confirm-dialog>
+      <cons-receipt-dialog ref="consReceiptBox" v-on:reRequest="updatePage"></cons-receipt-dialog>
   </div>
 </template>
 
@@ -251,282 +246,260 @@
 import orgTop from '../common/orgTop';//机构详情头部组件
 import riskWave from '../common/riskWave';//风险指数波动曲线组件
 import riskAnalysis from '../common/riskAnalysis';//风险指数分析组件
-import Ajax from '@/components/common/util';
+import addRiskDialog from '../common/addRiskDialog';//添加风险点弹框组件
+import checkDialog from '../common/checkDialog';//核查弹框组件
+import confirmDialog from '../common/confirmDialog';//确认弹框组件
+import checkDetailDialog from '../common/checkDetailDialog';//详情弹框组件
+import consultationDialog from '../common/consultationDialog';//会商弹框组件
+import dispositionDialog from '../common/dispositionDialog';//处置弹框组件
+import constSumDialog from '../common/constSumDialog';//会商总结弹框组件
+import dispSumDialog from '../common/dispSumDialog';//处置总结弹框组件
+import checkConfirmDialog from '../common/checkConfirmDialog';//核查回执弹框组件
+import consReceiptDialog from '../common/consReceiptDialog';//会商回执弹框组件
 
 export default {
   data () {
     return {
+      warningNo: '',
+      departmentId: sessionStorage.getItem('departmentId'),
       activeTab: 0,
-      uuid: '',
-      unit: ['市非处半','市工商局','市监管局','市银监局','市政法委','市信用中心','市国税局','市证监局','市公安局','市网信办','市信访办'],
-      checkboxGroup1: [],
-      checkboxGroup2: [],
-      radio: [],
-      selRiskPoint: '',
-      placeholder_n: '请输入核查结果详情\n情况属实时选填\n情况不属实时必填',
-      riskPoint: [ '大量投诉举报','法人频繁变更','注册地异常','用户量巨大','集体上访'],
-      comInfo:{
-
-        totalRiskLine: [
-          // {'2017-01': 25},
-          // {'2017-02': 21},
-          // {'2017-03': 22},
-          // {'2017-04': 21},
-          // {'2017-05': 28},
-          // {'2017-06': 30},
-          // {'2017-07': 33},
-          // {'2017-08': 28},
-          // {'2017-09': 29},
-          // {'2017-10': 36},
-          // {'2017-11': 45},
-          // {'2017-12': 41},
-          // {'2018-01': 47},
-          // {'2018-02': 60},
-          // {'2018-03': 65},
-          // {'2018-04': 78},
-          // {'2018-05': 86},
-          // {'2018-06': 91},
-          // {'2018-07': 98},
-          // {'2018-08': 99},
-        ],
-        partRiskLine: [
-          // {
-          //   name: '收益率指数',
-          //   key: 0,
-          //   riskNum: 38,
-          //   riskDetails: ['收益率超过15%','收益率超过15%','收益率超过15%'],
-          //   riskLine: [
-          //     {'2017-01': 25},
-          //     {'2017-02': 21},
-          //     {'2017-03': 22},
-          //     {'2017-04': 21},
-          //     {'2017-05': 28},
-          //     {'2017-06': 31},
-          //     {'2017-07': 31},
-          //     {'2017-08': 28},
-          //     {'2017-09': 29},
-          //     {'2017-10': 26},
-          //     {'2017-11': 25},
-          //     {'2017-12': 31},
-          //     {'2018-01': 37},
-          //     {'2018-02': 40},
-          //     {'2018-03': 35},
-          //     {'2018-04': 38},
-          //     {'2018-05': 36},
-          //     {'2018-06': 51},
-          //     {'2018-07': 48},
-          //     {'2018-08': 49},
-          //   ]
-          // },
-          // {
-          //   name: '虚假宣传指数',
-          //   key: 1,
-          //   riskNum: 65,
-          //   riskDetails: ['虚假宣传指数超过20%','虚假宣传指数超过20%'],
-          //   riskLine: [
-          //     {'2017-01': 25},
-          //     {'2017-02': 31},
-          //     {'2017-03': 42},
-          //     {'2017-04': 41},
-          //     {'2017-05': 48},
-          //     {'2017-06': 51},
-          //     {'2017-07': 51},
-          //     {'2017-08': 58},
-          //     {'2017-09': 59},
-          //     {'2017-10': 56},
-          //     {'2017-11': 55},
-          //     {'2017-12': 61},
-          //     {'2018-01': 67},
-          //     {'2018-02': 60},
-          //     {'2018-03': 65},
-          //     {'2018-04': 68},
-          //     {'2018-05': 76},
-          //     {'2018-06': 71},
-          //     {'2018-07': 78},
-          //     {'2018-08': 79},
-          //   ]
-          // },
-          // {
-          //   name: '关联风险',
-          //   key: 2,
-          //   riskNum: 75,
-          //   riskDetails: ['关联风险超过20%'],
-          //   riskLine: [
-          //     {'2017-01': 75},
-          //     {'2017-02': 71},
-          //     {'2017-03': 72},
-          //     {'2017-04': 71},
-          //     {'2017-05': 78},
-          //     {'2017-06': 71},
-          //     {'2017-07': 71},
-          //     {'2017-08': 78},
-          //     {'2017-09': 79},
-          //     {'2017-10': 76},
-          //     {'2017-11': 75},
-          //     {'2017-12': 71},
-          //     {'2018-01': 77},
-          //     {'2018-02': 70},
-          //     {'2018-03': 75},
-          //     {'2018-04': 78},
-          //     {'2018-05': 76},
-          //     {'2018-06': 71},
-          //     {'2018-07': 78},
-          //     {'2018-08': 79},
-          //   ]
-          // },
-          // {
-          //   name: '网格化监测',
-          //   key: 3,
-          //   riskNum: 95,
-          //   riskDetails: ['网格化监测超过20%','网格化监测超过20%'],
-          //   riskLine: [
-          //     {'2017-01': 95},
-          //     {'2017-02': 91},
-          //     {'2017-03': 92},
-          //     {'2017-04': 91},
-          //     {'2017-05': 98},
-          //     {'2017-06': 91},
-          //     {'2017-07': 91},
-          //     {'2017-08': 98},
-          //     {'2017-09': 99},
-          //     {'2017-10': 96},
-          //     {'2017-11': 95},
-          //     {'2017-12': 91},
-          //     {'2018-01': 97},
-          //     {'2018-02': 90},
-          //     {'2018-03': 95},
-          //     {'2018-04': 98},
-          //     {'2018-05': 96},
-          //     {'2018-06': 91},
-          //     {'2018-07': 98},
-          //     {'2018-08': 99},
-          //   ]
-          // },
-          // {
-          //   name: '运行异常指数',
-          //   key: 4,
-          //   riskNum: 65,
-          //   riskDetails: ['运行异常指数超过20%','运行异常指数超过15%'],
-          //   riskLine: [
-          //     {'2017-01': 25},
-          //     {'2017-02': 31},
-          //     {'2017-03': 42},
-          //     {'2017-04': 41},
-          //     {'2017-05': 48},
-          //     {'2017-06': 51},
-          //     {'2017-07': 51},
-          //     {'2017-08': 58},
-          //     {'2017-09': 59},
-          //     {'2017-10': 56},
-          //     {'2017-11': 55},
-          //     {'2017-12': 61},
-          //     {'2018-01': 67},
-          //     {'2018-02': 60},
-          //     {'2018-03': 65},
-          //     {'2018-04': 68},
-          //     {'2018-05': 76},
-          //     {'2018-06': 71},
-          //     {'2018-07': 78},
-          //     {'2018-08': 79},
-          //   ]
-          // },
-          // {
-          //   name: '负面舆情指数',
-          //   key: 5,
-          //   riskNum: 65,
-          //   riskDetails: ['负面舆情指数超过20%','负面舆情指数超过15%'],
-          //   riskLine: [
-          //     {'2017-01': 95},
-          //     {'2017-02': 91},
-          //     {'2017-03': 92},
-          //     {'2017-04': 91},
-          //     {'2017-05': 98},
-          //     {'2017-06': 91},
-          //     {'2017-07': 91},
-          //     {'2017-08': 98},
-          //     {'2017-09': 99},
-          //     {'2017-10': 96},
-          //     {'2017-11': 95},
-          //     {'2017-12': 91},
-          //     {'2018-01': 97},
-          //     {'2018-02': 90},
-          //     {'2018-03': 95},
-          //     {'2018-04': 98},
-          //     {'2018-05': 96},
-          //     {'2018-06': 91},
-          //     {'2018-07': 98},
-          //     {'2018-08': 99},
-          //   ]
-          // },
-          // {
-          //   name: '信用指数',
-          //   key: 6,
-          //   riskNum: 65,
-          //   riskDetails: ['信用指数低于80','信用指数低于80'],
-          //   riskLine: [
-          //     {'2017-01': 25},
-          //     {'2017-02': 31},
-          //     {'2017-03': 42},
-          //     {'2017-04': 41},
-          //     {'2017-05': 48},
-          //     {'2017-06': 51},
-          //     {'2017-07': 51},
-          //     {'2017-08': 58},
-          //     {'2017-09': 59},
-          //     {'2017-10': 56},
-          //     {'2017-11': 55},
-          //     {'2017-12': 61},
-          //     {'2018-01': 67},
-          //     {'2018-02': 60},
-          //     {'2018-03': 65},
-          //     {'2018-04': 68},
-          //     {'2018-05': 76},
-          //     {'2018-06': 71},
-          //     {'2018-07': 78},
-          //     {'2018-08': 79},
-          //   ]
-          // },
-          // {
-          //   name: '业务违规指数',
-          //   key: 7,
-          //   riskNum: 95,
-          //   riskDetails: ['业务违规指数超过15%','业务违规指数超过15%'],
-          //   riskLine: [
-          //     {'2017-01': 95},
-          //     {'2017-02': 91},
-          //     {'2017-03': 92},
-          //     {'2017-04': 91},
-          //     {'2017-05': 98},
-          //     {'2017-06': 91},
-          //     {'2017-07': 91},
-          //     {'2017-08': 98},
-          //     {'2017-09': 99},
-          //     {'2017-10': 96},
-          //     {'2017-11': 95},
-          //     {'2017-12': 91},
-          //     {'2018-01': 97},
-          //     {'2018-02': 90},
-          //     {'2018-03': 95},
-          //     {'2018-04': 98},
-          //     {'2018-05': 96},
-          //     {'2018-06': 91},
-          //     {'2018-07': 98},
-          //     {'2018-08': 99},
-          //   ]
-          // },
-        ],
-        riskPointData: [
-        ],
-        DialogBox:{
-          check: false,
-          confirm: false,
-          addRisk: false
-        }
-      }
+      comInfo: '',
+      company: '',
+      status: '',
+      warningDownForMeet: '',  //会商详情
+      warningSummaryForMeet: '',  //会商总结详情
+      userDownForMeet: '',  //下发到的部门id所在下发详情对象
+      //风险指数分析假数据 暂用
+      partRiskLine: [
+        {
+          name: '收益率指数',
+          key: 0,
+          riskNum: 38,
+          riskDetails: ['收益率达到15%'],
+          riskLine: [
+            {'2017-01': 25},
+            {'2017-02': 21},
+            {'2017-03': 22},
+            {'2017-04': 21},
+            {'2017-05': 28},
+            {'2017-06': 31},
+            {'2017-07': 31},
+            {'2017-08': 28},
+            {'2017-09': 29},
+            {'2017-10': 26},
+            {'2017-11': 25},
+            {'2017-12': 31},
+            {'2018-01': 37},
+            {'2018-02': 40},
+            {'2018-03': 35},
+            {'2018-04': 38},
+            {'2018-05': 36},
+            {'2018-06': 51},
+            {'2018-07': 48},
+            {'2018-08': 49},
+          ]
+        },
+        {
+          name: '虚假宣传指数',
+          key: 1,
+          riskNum: 65,
+          riskDetails: ['虚假宣传指数达到30%'],
+          riskLine: [
+            {'2017-01': 25},
+            {'2017-02': 31},
+            {'2017-03': 42},
+            {'2017-04': 41},
+            {'2017-05': 48},
+            {'2017-06': 51},
+            {'2017-07': 51},
+            {'2017-08': 58},
+            {'2017-09': 59},
+            {'2017-10': 56},
+            {'2017-11': 55},
+            {'2017-12': 61},
+            {'2018-01': 67},
+            {'2018-02': 60},
+            {'2018-03': 65},
+            {'2018-04': 68},
+            {'2018-05': 76},
+            {'2018-06': 71},
+            {'2018-07': 78},
+            {'2018-08': 79},
+          ]
+        },
+        {
+          name: '关联风险',
+          key: 2,
+          riskNum: 75,
+          riskDetails: ['关联风险达到23%'],
+          riskLine: [
+            {'2017-01': 75},
+            {'2017-02': 71},
+            {'2017-03': 72},
+            {'2017-04': 71},
+            {'2017-05': 78},
+            {'2017-06': 71},
+            {'2017-07': 71},
+            {'2017-08': 78},
+            {'2017-09': 79},
+            {'2017-10': 76},
+            {'2017-11': 75},
+            {'2017-12': 71},
+            {'2018-01': 77},
+            {'2018-02': 70},
+            {'2018-03': 75},
+            {'2018-04': 78},
+            {'2018-05': 76},
+            {'2018-06': 71},
+            {'2018-07': 78},
+            {'2018-08': 79},
+          ]
+        },
+        {
+          name: '网格化监测',
+          key: 3,
+          riskNum: 95,
+          riskDetails: ['网格化监测达到30%'],
+          riskLine: [
+            {'2017-01': 95},
+            {'2017-02': 91},
+            {'2017-03': 92},
+            {'2017-04': 91},
+            {'2017-05': 98},
+            {'2017-06': 91},
+            {'2017-07': 91},
+            {'2017-08': 98},
+            {'2017-09': 99},
+            {'2017-10': 96},
+            {'2017-11': 95},
+            {'2017-12': 91},
+            {'2018-01': 97},
+            {'2018-02': 90},
+            {'2018-03': 95},
+            {'2018-04': 98},
+            {'2018-05': 96},
+            {'2018-06': 91},
+            {'2018-07': 98},
+            {'2018-08': 99},
+          ]
+        },
+        {
+          name: '运行异常指数',
+          key: 4,
+          riskNum: 65,
+          riskDetails: ['运行异常指数达到75%'],
+          riskLine: [
+            {'2017-01': 25},
+            {'2017-02': 31},
+            {'2017-03': 42},
+            {'2017-04': 41},
+            {'2017-05': 48},
+            {'2017-06': 51},
+            {'2017-07': 51},
+            {'2017-08': 58},
+            {'2017-09': 59},
+            {'2017-10': 56},
+            {'2017-11': 55},
+            {'2017-12': 61},
+            {'2018-01': 67},
+            {'2018-02': 60},
+            {'2018-03': 65},
+            {'2018-04': 68},
+            {'2018-05': 76},
+            {'2018-06': 71},
+            {'2018-07': 78},
+            {'2018-08': 79},
+          ]
+        },
+        {
+          name: '负面舆情指数',
+          key: 5,
+          riskNum: 65,
+          riskDetails: ['负面舆情指数达到80%'],
+          riskLine: [
+            {'2017-01': 95},
+            {'2017-02': 91},
+            {'2017-03': 92},
+            {'2017-04': 91},
+            {'2017-05': 98},
+            {'2017-06': 91},
+            {'2017-07': 91},
+            {'2017-08': 98},
+            {'2017-09': 99},
+            {'2017-10': 96},
+            {'2017-11': 95},
+            {'2017-12': 91},
+            {'2018-01': 97},
+            {'2018-02': 90},
+            {'2018-03': 95},
+            {'2018-04': 98},
+            {'2018-05': 96},
+            {'2018-06': 91},
+            {'2018-07': 98},
+            {'2018-08': 99},
+          ]
+        },
+        {
+          name: '信用指数',
+          key: 6,
+          riskNum: 65,
+          riskDetails: ['信用指数低于80'],
+          riskLine: [
+            {'2017-01': 25},
+            {'2017-02': 31},
+            {'2017-03': 42},
+            {'2017-04': 41},
+            {'2017-05': 48},
+            {'2017-06': 51},
+            {'2017-07': 51},
+            {'2017-08': 58},
+            {'2017-09': 59},
+            {'2017-10': 56},
+            {'2017-11': 55},
+            {'2017-12': 61},
+            {'2018-01': 67},
+            {'2018-02': 60},
+            {'2018-03': 65},
+            {'2018-04': 68},
+            {'2018-05': 76},
+            {'2018-06': 71},
+            {'2018-07': 78},
+            {'2018-08': 79},
+          ]
+        },
+        {
+          name: '业务违规指数',
+          key: 7,
+          riskNum: 95,
+          riskDetails: ['业务违规指数达到15%'],
+          riskLine: [
+            {'2017-01': 95},
+            {'2017-02': 91},
+            {'2017-03': 92},
+            {'2017-04': 91},
+            {'2017-05': 98},
+            {'2017-06': 91},
+            {'2017-07': 91},
+            {'2017-08': 98},
+            {'2017-09': 99},
+            {'2017-10': 96},
+            {'2017-11': 95},
+            {'2017-12': 91},
+            {'2018-01': 97},
+            {'2018-02': 90},
+            {'2018-03': 95},
+            {'2018-04': 98},
+            {'2018-05': 96},
+            {'2018-06': 91},
+            {'2018-07': 98},
+            {'2018-08': 99},
+          ]
+        },
+      ],
     };
   },
   components: {
-    orgTop,riskWave,riskAnalysis
+    orgTop,riskWave,riskAnalysis,addRiskDialog,checkDialog,confirmDialog,checkDetailDialog,consultationDialog,dispositionDialog,constSumDialog,consReceiptDialog,checkConfirmDialog,dispSumDialog
   },
   methods: {
     //表格头部样式
@@ -534,7 +507,7 @@ export default {
       if(columnIndex === 1 || columnIndex === 2 || columnIndex === 6){
         return 'text-align:left;background:#ecf5ff;color:#333;padding:10px;font-size:18px;font-weight:normal;'
       }else{
-        return 'background:#ecf5ff;color:#333;padding:10px 0 12px;text-align:center;font-size:18px;font-weight:normal;'
+        return 'background:#ecf5ff;color:#333;padding:10px 0;text-align:center;font-size:18px;font-weight:normal;'
       }
     },
     //每行样式
@@ -546,31 +519,43 @@ export default {
       if(columnIndex === 1 || columnIndex === 2 || columnIndex === 6){
         return 'padding:10px;text-align:left;border-bottom:1px solid rgba(70, 160, 252, 0.2);'
       }else{
-        return 'padding:10px;text-align:center;border-bottom:1px solid rgba(70, 160, 252, 0.2);'
+        return 'padding:10px 0;text-align:center;border-bottom:1px solid rgba(70, 160, 252, 0.2);'
+      }
+    },
+    
+    //会商详情表格头部样式
+    consHeaderCellStyle({row, column, rowIndex, columnIndex}){
+      if(columnIndex === 3){
+        return 'text-align:left;background:#ecf5ff;color:#333;padding:10px;font-size:18px;font-weight:normal;'
+      }else{
+        return 'background:#ecf5ff;color:#333;padding:10px 0;text-align:center;font-size:18px;font-weight:normal;'
+      }
+    },
+    //每行样式
+    // rowStyle({}){
+    //   return 'background:#fff;color:#333;text-align:center;font-size:14px;'
+    // },
+    //每单元格样式
+    consCellStyle({row, column, rowIndex, columnIndex}){
+      if(columnIndex === 3){
+        return 'padding:10px;text-align:left;border-bottom:1px solid rgba(70, 160, 252, 0.2);'
+      }else{
+        return 'padding:10px 0;text-align:center;border-bottom:1px solid rgba(70, 160, 252, 0.2);'
       }
     },
     //文件超出个数限制时的钩子
     handleExceed(files, fileList) {
-      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
     },
-    //删除文件之前的钩子
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${ file.name }？`);
-    },
-    //获取传入参数id
+    //获取页面详情数据
     getCompanyDetail(queryId){
-      //  var queryId = this.$route.query.userId;
       console.log(queryId);
       this.$axios({
         method: "post",
-        url: this.HOME +"warning/get",
+        url: this.HOME +"warning/get?warningNo=" + queryId,
         headers: {
-          token: sessionStorage.getItem("authorization"),
           "content-type": "application/json;charset=UTF-8"
-        },
-        data: JSON.stringify({
-          warningNo: queryId,
-        })
+        }
       })
         .then(res => {
           console.log(res);
@@ -578,73 +563,106 @@ export default {
           let msg = !this.$common.isNull(res.data)
             ? res.data.data
             : "";
-          console.log("进入then")
-          // this.warningList = msg.list;
-          // this.pageInfo.total = msg.total;
-          // let Cstatus = msg.list.company.status;
-          // console.log(msg)
+          this.comInfo = msg;
+          this.company = msg.company;
+          this.status = msg.status;
+          // if(msg.warningDownForMeet.length > 0){}
+          this.warningDownForMeet = msg.warningDownForMeet;
+          //拿到会商详情数组里部门id等于当前登录人部门id的一组数据
+          let departmentId = this.departmentId;
+          msg.warningDownForMeet.forEach(e => {
+            if(e.departmentId == departmentId){
+              this.userDownForMeet = e;
+              this.userDownForMeet.companyName = msg.companyName;
+            }
+          });
+          this.warningSummaryForMeet = msg.warningSummaryForMeet;
         })
         .catch(err => {
           alert("错误：获取数据异常" + err);
         });
+    },
+    //添加风险点按钮事件
+    addRiskPop(val){
+      this.$refs['addRiskBox'].showDialog(val);
+    },
+    //核查按钮事件
+    checkPop(val){
+      this.$refs['checkBox'].showDialog(val);
+    },
+    //确认按钮事件
+    confirmPop(val){
+      this.$refs['confirmBox'].showDialog(val);
+    },
+    //风险点详情
+    checkDetail(val){
+      this.$refs['checkDetailBox'].showDialog(val);
+    },
+    //会商
+    consultationPop(val){
+      this.$refs['consultationBox'].showDialog(val);
+    },
+    //处置
+    dispositionPop(val){
+      this.$refs['dispositionBox'].showDialog(val);
+    },
+    //会商总结
+    constSumPop(val){
+      this.$refs['constSumBox'].showDialog(val);
+    },
+    //处置总结
+    dispSumPop(val){
+      this.$refs['dispSumBox'].showDialog(val);
+    },
+    //核查回执
+    checkConfirmPop(val){
+      this.$refs['checkConfirmBox'].showDialog(val);
+    },
+    //会商回执
+    consReceiptPop(val){
+      this.$refs['consReceiptBox'].showDialog(val);
+    },
+    //重新请求详情页数据
+    updatePage(){
+      this.getCompanyDetail(this.warningNo);
     }
   },
+  //过滤器 有问题
+  // filters: {
+  //   formatDepartmentId(val){
+  //     if (!val) return ''
+  //     this.$axios({
+  //       method: "get",
+  //       url: this.HOME +"dic/getDepartment",
+  //       headers: {
+  //         token: sessionStorage.getItem("authorization"),
+  //         "content-type": "application/json;charset=UTF-8"
+  //       }
+  //     })
+  //       .then(res => {
+  //         if (res.data.resultCode == 200){
+  //           res.data.data.values.forEach(e => {
+  //             if(e.code == val){
+  //               return e.name
+  //             }
+  //           });
+  //         }
+  //       })
+  //       .catch(err => {
+  //         alert("错误：获取数据异常" + err);
+  //       });
+  //   }
+  // },
   activated(){
-    this.getCompanyDetail(this.$route.query.warningNo);
+    //获取传入warningNo
+    this.warningNo = this.$route.query.warningNo;
+    this.getCompanyDetail(this.warningNo);
+    // console.log(this.departmentId);
   }
 }
 
 </script>
 <style lang='scss' >
     @import "@/assets/css/page/warn_org.scss";
-    .el-dialog__header{
-      background: $fontColorBlue;
-      color: #fff;
-      padding-top: 10px;
-    }
-    .el-dialog__title {
-      color: #fff;
-    }
-    .el-dialog--center {
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    .el-dialog--center .el-dialog__body {
-      padding: 40px 50px 40px;
-    }
-    .el-textarea__inner{
-      border: 1px solid $fontColorBlue !important;
-    }
-    .el-checkbox-button{
-      margin: 0 12px 10px 0;
-    }
-    .el-checkbox-button__inner {
-      border: 1px solid $fontColorBlue;
-      border-radius: 3px;
-      color: $fontColorBlue;
-    }
-    .el-checkbox-button:first-child .el-checkbox-button__inner,.el-checkbox-button:last-child .el-checkbox-button__inne{
-      border: 1px solid $fontColorBlue !important;
-      border-radius: 3px !important;
-    }
-    .el-checkbox-button--small .el-checkbox-button__inner{
-      border-radius: 3px !important;
-    }
-    .el-dialog__footer {
-      padding: 10px 20px 50px;
-    }
-    .el-dialog__footer .el-button{
-      width: 200px;
-      padding: 16px 20px;
-      font-size: 18px;
-    }
-    .el-dialog__footer .cancel{
-      background: #c4c4c4 !important;
-    }
-    .el-dialog__footer .el-button+.el-button {
-      margin-left: 40px;
-    }
-    .el-table .cell, .el-table th div{
-      padding: 0!important;
-    }
+
 </style>

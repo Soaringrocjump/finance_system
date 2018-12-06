@@ -2,12 +2,12 @@
 <template>
   <div class="comTop display-flex justify-content-space-between align-items-center">
 
-      <img v-if="orgTopInfo.companyStatus=='在运营'" class="stamp" src="@/assets/img/stamp.png" alt="">
-      <img v-else-if="orgTopInfo.companyStatus=='立案'" class="stamp" src="@/assets/img/stamp.png" alt="">
-      <img v-else-if="orgTopInfo.companyStatus=='失联'" class="stamp" src="@/assets/img/stamp.png" alt="">
-      <img v-else-if="orgTopInfo.companyStatus=='注销'" class="stamp" src="@/assets/img/stamp.png" alt="">
-      <img v-else-if="orgTopInfo.companyStatus=='其他'" class="stamp" src="@/assets/img/stamp.png" alt="">
-      <img v-else class="stamp" src="@/assets/img/stamp.png" alt="">
+      <img v-if="orgTopInfo.status=='在运营'" class="stamp" src="@/assets/img/status1.png" alt="">
+      <img v-else-if="orgTopInfo.status=='失联跑路'" class="stamp" src="@/assets/img/status2.png" alt="">
+      <img v-else-if="orgTopInfo.status=='清盘退出'" class="stamp" src="@/assets/img/status3.png" alt="">
+      <img v-else-if="orgTopInfo.status=='立案'||orgTopInfo.status=='立案侦查'" class="stamp" src="@/assets/img/status4.png" alt="">
+      <img v-else-if="orgTopInfo.status=='注销'" class="stamp" src="@/assets/img/status5.png" alt="">
+      <img v-else class="stamp" src="@/assets/img/status6.png" alt=""><!-- 其他 -->
 
 
     <div class="left">
@@ -21,9 +21,9 @@
     <div class="right display-flex align-items-center">
         <slot name="report"></slot>
         <div class="riskIndex">
-            <el-progress type="circle" :percentage="orgTopInfo.riskIndex" color="#ff5361" :width="90">
+            <el-progress type="circle" :percentage="riskIndex" color="#ff5361" :width="90">
             </el-progress>
-            <div style="position: absolute;top: 87px;width: 90px;text-align: center">{{orgTopInfo.riskIndex}}</div>
+            <div style="position: absolute;top: 87px;width: 90px;text-align: center">{{riskIndex}}</div>
             <p>风险指数</p>
 
         </div>
@@ -35,7 +35,7 @@
 <script>
 import ChartUtils from '@/components/common/charts';
 export default {
-  props: ['orgTopInfo'],
+  props: ['orgTopInfo','riskIndex'],
   data () {
     return {
       radarData:[]

@@ -655,54 +655,54 @@ export default {
 </script>
 <style lang='scss' >
 @import "@/assets/css/page/warn_org.scss";
-.el-dialog__header {
-  background: $fontColorBlue;
-  color: #fff;
-  padding-top: 10px;
-}
-.el-dialog__title {
-  color: #fff;
-}
-.el-dialog--center {
-  border-radius: 5px;
-  overflow: hidden;
-}
-.el-dialog--center .el-dialog__body {
-  padding: 40px 50px 40px;
-}
-.el-textarea__inner {
-  border: 1px solid $fontColorBlue !important;
-}
-.el-checkbox-button {
-  margin: 0 12px 10px 0;
-}
-.el-checkbox-button__inner {
-  border: 1px solid $fontColorBlue;
-  border-radius: 3px;
-  color: $fontColorBlue;
-}
-.el-checkbox-button:first-child .el-checkbox-button__inner,
-.el-checkbox-button:last-child .el-checkbox-button__inne {
-  border: 1px solid $fontColorBlue !important;
-  border-radius: 3px !important;
-}
-.el-checkbox-button--small .el-checkbox-button__inner {
-  border-radius: 3px !important;
-}
-.el-dialog__footer {
-  padding: 10px 20px 50px;
-}
-.el-dialog__footer .el-button {
-  width: 200px;
-  padding: 16px 20px;
-  font-size: 18px;
-}
-.el-dialog__footer .cancel {
-  background: #c4c4c4 !important;
-}
-.el-dialog__footer .el-button + .el-button {
-  margin-left: 40px;
-}
+// .el-dialog__header {
+//   background: $fontColorBlue;
+//   color: #fff;
+//   padding-top: 10px;
+// }
+// .el-dialog__title {
+//   color: #fff;
+// }
+// .el-dialog--center {
+//   border-radius: 5px;
+//   overflow: hidden;
+// }
+// .el-dialog--center .el-dialog__body {
+//   padding: 40px 50px 40px;
+// }
+// .el-textarea__inner {
+//   border: 1px solid $fontColorBlue !important;
+// }
+// .el-checkbox-button {
+//   margin: 0 12px 10px 0;
+// }
+// .el-checkbox-button__inner {
+//   border: 1px solid $fontColorBlue;
+//   border-radius: 3px;
+//   color: $fontColorBlue;
+// }
+// .el-checkbox-button:first-child .el-checkbox-button__inner,
+// .el-checkbox-button:last-child .el-checkbox-button__inne {
+//   border: 1px solid $fontColorBlue !important;
+//   border-radius: 3px !important;
+// }
+// .el-checkbox-button--small .el-checkbox-button__inner {
+//   border-radius: 3px !important;
+// }
+// .el-dialog__footer {
+//   padding: 10px 20px 50px;
+// }
+// .el-dialog__footer .el-button {
+//   width: 200px;
+//   padding: 16px 20px;
+//   font-size: 18px;
+// }
+// .el-dialog__footer .cancel {
+//   background: #c4c4c4 !important;
+// }
+// .el-dialog__footer .el-button + .el-button {
+//   margin-left: 40px;
+// }
 // .placeholder_n::after{
 //   display:block;
 //   content:"line@ \A line#";/*  \A 表示换行  */

@@ -1,11 +1,8 @@
 <template>
 
     <div class="orgDetails warn-content">
-      <org-top :orgTopInfo="comInfo" ><!--:ChartData="radarData"-->
-        <div slot="report" class="report">
-          <!--<i class="el-icon-tickets"></i>
-          <p><a href="#">风险分析报告</a></p>-->
-        </div>
+      <org-top :orgTopInfo="comInfo" :riskIndex="comInfo.riskWave.riskIndex">
+
       </org-top>
 
 
@@ -43,9 +40,8 @@
         },
       data () {
         return {
-          comInfo:{
-
-          },
+          comInfo:'',
+          warningNo: '',
           //radarData:[]
         };
       },
@@ -54,12 +50,11 @@
         getInstitutionsDetail: function(uuid) {
           var self = this;
           var authorization = sessionStorage.getItem("authorization"); //sessionStorage里取出token;
-          var url = this.HOME + "/company/publicDetilsOfWarningFirst";
+          var url = this.HOME + "/company/get?uuid="+uuid;
           var qs = require('qs');
-
           this.$axios
             .post(url,
-              qs.stringify({ uuid :uuid }),
+             /* qs.stringify({ uuid :uuid }),*/
               {
                 headers: {
                   authorization: authorization,

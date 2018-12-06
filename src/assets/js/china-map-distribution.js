@@ -9,8 +9,8 @@ let loadChinaMap = {};
 
 loadChinaMap.chinaMap = function (domID) {
 
-// canvasMap.width = document.body.scrollWidth*0.8;
-// canvasMap.height = document.body.scrollHeight*0.8;
+  domID.width = document.body.scrollWidth*0.8;
+  domID.height = document.body.scrollHeight*0.8;
 
   const geoCoordMap = {
     '宁波': [121.5967, 29.6466],
@@ -197,6 +197,8 @@ loadChinaMap.chinaMap = function (domID) {
         }
       },
       roam: true,
+      layoutCenter: ['30%', '43%'],
+      layoutSize: 700,
       itemStyle: {
         normal: {
           areaColor: '#004882',

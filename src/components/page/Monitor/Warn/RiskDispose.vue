@@ -1,23 +1,24 @@
+<!-- 风险处置 created by zp -->
 <template>
-  <div class="sm_body riskCon_body" @tab-click="tabClick">
-    <el-tabs type="border-card">
+  <div class="warn-content riskCon_body" >
+    <el-tabs type="border-card" @tab-click="tabClick">
       <el-tab-pane label="处置中">
-        <dispose-in :tableData="warningList" :pageData="pageInfo"></dispose-in>
+        <dispose-in :tableData="warningList" :pageData="pageInfo" v-on:changePage="cutPage"></dispose-in>
       </el-tab-pane>
       <el-tab-pane label="已处置">
-        <dispose-been :tableData="warningList" :pageData="pageInfo"></dispose-been>
+        <dispose-been :tableData="warningList" :pageData="pageInfo" v-on:changePage="cutPage"></dispose-been>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 
 <script>
-/*风险处置*/
 import DisposeIn from "./RiskDispose/DisposeIn.vue";
 import DisposeBeen from "./RiskDispose/DisposeBeen.vue";
 export default {
   data() {
     return {
+      tabLabel: '处置中',
       pageInfo: {
         pageNum: 1,
         pageSize: 10,
@@ -34,30 +35,29 @@ export default {
   methods: {
     // tab切换
     tabClick(tab, e) {
-      debugger;
+      // debugger;
       this.getList(null, tab.label);
+      this.tabLabel = tab.label;
+      console.log(tab.label)
     },
     //信息检索查询机构warning/query
     getList(currentPage, warnStatus) {
-
       var user = this.$common.getLoginUser();
       this.$axios({
         method: "post",
         url: this.HOME +"warning/query",
         headers: {
-          token: sessionStorage.getItem("authorization"),
           "content-type": "application/json;charset=UTF-8"
         },
-        data: JSON.stringify({
+        data: {
           userDeptId: user.departmentId,
           warnStatus: warnStatus || "处置中",
           pageNum: currentPage || this.pageInfo.pageNum,
           pageSize: this.pageInfo.pageSize
-        })
+        }
       })
         .then(result => {
           console.log(result);
-
           if (result.data.resultCode != "200") alert("错误：" + msg.message);
           var msg = !this.$common.isNull(result.data.data)
             ? result.data.data
@@ -69,16 +69,13 @@ export default {
         .catch(err => {
           alert("错误：获取数据异常" + err);
         });
-    }, //pageSize 改变时会触发
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.currentPage = 1;
-      this.getWarningData(1, this.pageSize);
-    },
-    //currentPage 改变时会触发
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      this.getWarningData(val, this.pageSize);
+    }, 
+    //获取子组件分页值重新请求数据
+    cutPage(val){
+      console.log(val);
+      console.log(this.tabLabel);
+      this.pageInfo.pageNum = val;
+      this.getList(val, this.tabLabel);
     }
   },
   mounted() {
@@ -88,7 +85,7 @@ export default {
 </script>
 
 <style lang="scss" >
-@import "@/assets/css/page/v_index.scss";
+@import "@/assets/css/page/warn_org.scss";
 .riskCon_body {
   .el-tabs__content {
     padding: 0px;

@@ -1,0 +1,280 @@
+/*公共*/
+// 机构列表
+.departmentalSupervision{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    padding: 20px 30px;
+    background: white;
+    overflow-y: scroll;
+  .el-tabs--border-card>.el-tabs__header{
+    background: white;
+    border-bottom: 1px solid #46a0fc;
+  }
+  .el-tabs__item{
+    width: 140px;
+    text-align: center;
+    font-size: 16px;
+    padding: 0px;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    margin-right: 5px !important;
+    margin-left: 0px !important;
+    margin-top: 0px !important;
+    margin-bottom: -1px !important;
+    border-right-color: #d7d8d9 !important;
+    border-left-color: #d7d8d9 !important;
+    border-top-color: #d7d8d9 !important;
+
+  }
+  .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active{
+    border-right-color: $fontColorBlue !important;
+    border-left-color: $fontColorBlue !important;
+    border-top: 2px solid $fontColorBlue !important;
+  }
+  .el-tabs--border-card>.el-tabs__header{
+    // border-bottom: 4px solid $fontColorBlue;
+  }
+  .el-tabs--border-card{
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+  .el-tabs--border-card{
+    border: none;
+  }
+  .el-tabs--border-card>.el-tabs__content {
+    padding: 0;
+  }
+
+  //table
+
+  //分页
+  .el-pagination{
+    text-align: center;
+    margin: 10px 0;
+  }
+  .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li {
+    margin: 0 5px;
+    background-color: #fff;
+    border: 1px solid #C4C4C4;
+    color: #606266;
+    min-width: 30px;
+    border-radius: 2px;
+  }
+  .el-pagination.is-background .el-pager li:not(.disabled).active {
+    border: 1px solid #409EFF;
+    background-color: #fff;
+    color: #46A0FC;
+  }
+}
+
+//公用
+.Subtitle{
+  padding: 15px 10px;
+  font-weight: bolder;
+  font-size: 20px;
+}
+//表格
+.table_left_bottom{
+  .el-table th{
+    background-color: #f5f6fa;
+    color: black;
+  }
+
+
+  .cell{
+    .el-button{
+      padding: 10px 25px;
+      border: 1px solid #f3f3f3;
+      color: black;
+
+    }
+    .el-button:hover{
+      color: #46a0fc;
+      border: 1px solid #46a0fc;
+
+    }
+  }
+}
+  //公安局
+  .Police_page{
+    .el-row{
+      margin-top:20px;
+    }
+    .Waitechart{
+      border-top: 1px solid #f3f3f3;
+
+    }
+    .table_left_bottom{
+      margin-top: 20px;
+    }
+
+    .table_left_bottom{
+      .el-table th:nth-child(4){
+        padding-left: 25px;
+      }
+    }
+
+    //数据显示
+  .Dataspace{
+    border-top: 1px solid #f3f3f3;
+    padding: 30px 0;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bolder;
+    .el-col:nth-of-type(2){
+      .ri_top{
+        border-left: 1px solid #f3f3f3;
+        border-right: 1px solid #f3f3f3;
+      }
+    }
+    .ri_fir_mid{
+      margin-top: 20px;
+      color: #46A0FC;
+    }
+  }
+    //公安左边块
+    .Poor_records_of_key_personnel{
+      border: 1px solid #f3f3f3;
+      margin-right: 20px;
+
+    }
+    //
+    //公安右边块
+    .Punishment_of_Illegal_Financial_Cases{
+      border: 1px solid #f3f3f3;
+      .Dataspace{
+        .el-col:nth-of-type(2){
+          .ri_fir_mid{
+            color: red;
+          }
+        }
+      }
+    }
+  }
+  //市场监管局
+  .MarketSupervision_page{
+    .el-row{
+      margin-top:20px;
+    }
+
+    .Quarter{
+
+      height: 450px;
+      border: 1px solid #f3f3f3;
+    }
+    .Quarter:nth-of-type(2){
+      margin-top: 20px;
+    }
+    //左边块
+    .left_block{
+
+      margin-right: 20px;
+      //表内TAB
+      .Regulatory_details{
+        .el-table th{
+          background-color: #f5f6fa;
+          color: black;
+        }
+
+        //建设中
+        .wait_table{
+          padding-top:30px;
+          text-align: center;
+        }
+        border-top: 1px solid #f3f3f3;
+        .el-tabs__nav-wrap{
+          margin-top: 20px;
+          margin-left: 30px;
+         }
+        .el-tabs__item{
+          padding: 0 10px !important;;
+          width: auto;
+        }
+      }
+    }
+  }
+
+
+  //人行市中心分行
+  .PeopleBank_page{
+    .el-row{
+      margin-top:20px;
+    }
+    .Subtitle{
+      padding: 18px 10px;
+      font-weight: bolder;
+      font-size: 20px;
+    }
+    .Poor_records_of_financial_institutions{
+      border: 1px solid #f3f3f3;
+      margin-right: 20px;
+    }
+    .Financial_institutions_investigation{
+      border: 1px solid #f3f3f3;
+    }
+  }
+//银监
+.bankingSupervision_left_title{
+  .el-table th{
+    padding:22px 10px;
+  }
+
+}
+//国税
+.NationalTax_page{
+
+    .el-row{
+      margin-top:20px;
+      border: 1px solid #f3f3f3;
+    }
+
+    .table_left_bottom{
+      .el-table td, .el-table th.is-leaf{
+        padding-left: 10px;
+      }
+    }
+
+  .el-pagination{
+    float:right;
+    text-align: right;
+    margin:0;
+  }
+  .footer{
+    background-color: #f5f6fa;
+  padding: 10px;
+    .el-checkbox__inner{
+      width: 16px;
+      height: 16px;
+      margin-right: 10px;
+    }
+  }
+
+  }
+
+//地税
+.LandTax{
+  .el-pagination{
+    float:none;
+    text-align: right;
+    margin:0;
+  }
+}
+//法院
+.Court{
+  .wait_table{
+    padding: 20px;
+    border-top: 1px solid #f3f3f3;
+    text-align: center;
+    font-size: 12px;
+    height: 700px;
+  }
+}
+//维稳
+.MaintainStability{
+  .el-table th{
+    padding:22px 10px;
+    font-size: 12px;
+  }
+
+}

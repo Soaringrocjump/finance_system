@@ -1,4 +1,4 @@
-<!-- 表格 -->
+<!-- 表格列表 created by zp -->
 <template>
   <div style="position:relative;">
     <el-table :data="tableData" style="width: 100%" :header-cell-style="headerCellStyle" :row-style="rowStyle" :cell-style="cellStyle" :default-sort="{prop: 'date', order: 'descending'}">
@@ -25,26 +25,22 @@
         filter-placement="bottom-end"
         min-width="100">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.company.status == '在运营' ? 'primary' : 'success'" disable-transitions>{{scope.row.company.status}}</el-tag>
+            {{scope.row.company.status}}
           </template>
         </el-table-column>
-        <el-table-column prop="risk_index" label="风险指数" sortable min-width="120">
+        <el-table-column label="风险指数" sortable min-width="120">
           <template slot-scope="scope">
-            <span v-if="scope.row.riskIndex > 85" class="highRisk">{{scope.row.riskIndex}}</span>
-            <span v-else-if="scope.row.riskIndex > 55" class="middleRisk">{{scope.row.riskIndex}}</span>
-            <span v-else class="lowRisk">{{scope.row.riskIndex}}</span>
+            <span v-if="scope.row.riskIndex > 85" class="danger">{{scope.row.riskIndex}}</span>
+            <span v-else-if="scope.row.riskIndex > 55" class="warning">{{scope.row.riskIndex}}</span>
+            <span v-else class="primary">{{scope.row.riskIndex}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="business_type" label="业务类型" min-width="100">
+          <template slot-scope="scope">
+            {{scope.row.company.businessType}}
           </template>
         </el-table-column>
         <el-table-column
-        prop="business_type"
-        label="业务类型"
-        min-width="100">
-          <template slot-scope="scope">
-            <el-tag>{{scope.row.company.businessType}}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-        prop="area"
         label="辖区归属"
         :filters="[
         { text: '鄞州区', value: '鄞州区' }, 
@@ -60,22 +56,23 @@
         filter-placement="bottom-end"
         min-width="100">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.company.area == '鄞州区' ? 'primary' : 'success'" disable-transitions>{{scope.row.company.area}}</el-tag>
+            {{scope.row.company.area}}
           </template>
         </el-table-column>
-        <el-table-column prop="create_time" label="预警时间" sortable min-width="150">
+        <el-table-column prop="create_time" label="预警时间" sortable min-width="120">
           <template slot-scope="scope">
-          {{scope.row.warningTime}}
+            <span v-if="scope.row.warningTime == null">{{scope.row.warningTime}}</span>
+            <span v-else>{{scope.row.warningTime.substr(0,10)}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="hs_status" label="状态" min-width="60">
           <template slot-scope="scope">
-          {{scope.row.status}}
+          <span class="primary">{{scope.row.status}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="120">
           <template slot-scope="scope">
-            <slot name="btn" @click="toConsultation(scope.row)"></slot>
+            <el-button type="primary" size="mini" v-show="scope.row.status == '已核查'" @click="toDetails(scope.row)">会商</el-button>
             <el-button type="primary" size="mini" @click="toDetails(scope.row)">核查</el-button>
           </template>
         </el-table-column>
@@ -134,14 +131,15 @@ export default {
       //这里换成详情页路由
       this.$router.push({
         path: "/orgWarning",
-        query: { warningNo: 60 }
+        // query: { warningNo: 60 }
+        query: { warningNo: row.warningNo }
       });
     },
+    //分页事件触发父组件请求
     handleCurrentChange(val) {
       // console.log(val);
       this.$emit("changePage", val);
     }
-    //
   }
 };
 </script>

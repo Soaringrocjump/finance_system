@@ -6,10 +6,10 @@
           <el-select
             size="small"
             v-model="regionOption"
-            v-on:change="changeRegion(regionOption)"
+            v-on:change="loadMapByCriteria"
             clearable placeholder="全市">
             <el-option
-              v-for="item in options"
+              v-for="item in countyOptions"
               :key="item.value"
               :label="item.label"
               :value="item.value">
@@ -22,7 +22,7 @@
         <div class="grid-content bg-purple">
           <el-input ref="critinsti" size="small" v-model="instituInp"
                     placeholder="可输入金融机构名称搜索">
-            <i slot="suffix" ref="searchbtn" class="el-input__icon el-icon-search" v-on:click="loadMapByInstit"></i>
+            <i slot="suffix" ref="searchbtn" class="el-input__icon el-icon-search" v-on:click="loadMapByCriteria"></i>
           </el-input>
         </div>
         <input type="hidden" id="institutionInp" v-model="instituInp"/>
@@ -32,26 +32,24 @@
     <el-tabs id="riskWarnSear" v-model="activeTab" type="card" @tab-click="handleClick">
       <el-tab-pane label="高风险预警" name="first">
         <el-table
-          :data="riskWarnDataFirst"
+          :data="riskWarnData"
+          v-loading="loading"
           @row-click="loadMapByOnePoint"
           style="width: 100%">
           <el-table-column
-            prop="seq"
+            type="index"
+            :index="indexMethod"
             label="序号"
             width="50">
-            <template slot-scope="scope">
-              <span style="margin-left: 10px">{{ scope.row.seq }}</span>
-              <i class="lon-hidden">{{ scope.row.lon }}</i>
-              <i class="lat-hidden">{{ scope.row.lat }}</i>
-            </template>
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="companyName"
             label="机构名称"
-            width="200">
+            width="200"
+            show-overflow-tooltip>
           </el-table-column>
           <el-table-column
-            prop="rIndex"
+            prop="riskWave.riskIndex"
             label="风险指数"
             width="100"
             class-name="rIndex-td-first">
@@ -65,29 +63,35 @@
                 size="mini">
                 未处置
               </el-button>
+              <i class="lon-hidden">{{ scope.row.longitude }}</i>
+              <i class="lat-hidden">{{ scope.row.latitude }}</i>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="中风险预警" name="second">
         <el-table
-          :data="riskWarnDataSecond"
+          :data="riskWarnData"
+          v-loading="loading"
+          @row-click="loadMapByOnePoint"
           style="width: 100%">
           <el-table-column
-            prop="seq"
+            type="index"
+            :index="indexMethod"
             label="序号"
             width="50">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="companyName"
             label="机构名称"
-            width="200">
+            width="200"
+            show-overflow-tooltip>
           </el-table-column>
           <el-table-column
-            prop="rIndex"
+            prop="riskWave.riskIndex"
             label="风险指数"
             width="100"
-            class-name="rIndex-td-second">
+            class-name="rIndex-td-first">
           </el-table-column>
           <el-table-column
             label="处置状态">
@@ -98,29 +102,35 @@
                 size="mini">
                 未处置
               </el-button>
+              <i class="lon-hidden">{{ scope.row.longitude }}</i>
+              <i class="lat-hidden">{{ scope.row.latitude }}</i>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="低风险预警" name="third">
         <el-table
-          :data="riskWarnDataThird"
+          :data="riskWarnData"
+          v-loading="loading"
+          @row-click="loadMapByOnePoint"
           style="width: 100%">
           <el-table-column
-            prop="seq"
+            type="index"
+            :index="indexMethod"
             label="序号"
             width="50">
           </el-table-column>
           <el-table-column
-            prop="name"
+            prop="companyName"
             label="机构名称"
-            width="200">
+            width="200"
+            show-overflow-tooltip>
           </el-table-column>
           <el-table-column
-            prop="rIndex"
+            prop="riskWave.riskIndex"
             label="风险指数"
             width="100"
-            class-name="rIndex-td-third">
+            class-name="rIndex-td-first">
           </el-table-column>
           <el-table-column
             label="处置状态">
@@ -131,6 +141,8 @@
                 size="mini">
                 未处置
               </el-button>
+              <i class="lon-hidden">{{ scope.row.longitude }}</i>
+              <i class="lat-hidden">{{ scope.row.latitude }}</i>
             </template>
           </el-table-column>
         </el-table>
@@ -157,213 +169,145 @@
         <span>低风险机构</span>
       </el-col>
     </el-row>
+
   </div>
 </template>
 
 <script>
+  import Ajax from "@/components/common/util";
 
-    export default {
+  let datalist;
+  export default {
       name: "RiskQuery",
+      mounted() {
+        let mapParams = {companyName:'',
+          area: '',
+          warningLevel:'高风险',
+        };
+        this.getCompanyList(mapParams);
+      },
       data() {
         return {
-          options: [{
-            value: '1',
+          countyOptions: [{
+            value: '海曙区',
             label: '海曙区'
           }, {
-            value: '2',
+            value: '鄞州区',
             label: '鄞州区'
           }, {
-            value: '3',
+            value: '江北区',
             label: '江北区'
           }, {
-            value: '4',
+            value: '北仑区',
             label: '北仑区'
           }, {
-            value: '5',
+            value: '镇海区',
             label: '镇海区'
           }, {
-            value: '6',
+            value: '奉化区',
             label: '奉化区'
           }, {
-            value: '7',
+            value: '余姚市',
             label: '余姚市'
           }, {
-            value: '8',
+            value: '慈溪市',
             label: '慈溪市'
           }, {
-            value: '9',
+            value: '宁海县',
             label: '宁海县'
           }, {
-            value: '10',
+            value: '象山县',
             label: '象山县'
           }],
           regionOption: '',
-          riskWarnDataFirst: [{
-            seq: '1',
-            name: 'AAA控股集团有限公司',
-            rIndex: '96',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '2',
-            name: 'BBB控股集团有限公司',
-            rIndex: '96',
-            lon: 121.547,
-            lat: 29.8172
-          },{
-            seq: '3',
-            name: 'CCC控股集团有限公司',
-            rIndex: '96',
-            lon: 121.55468,
-            lat: 29.88615
-          },{
-            seq: '4',
-            name: 'DDD控股集团有限公司',
-            rIndex: '96',
-            lon: 121.84431,
-            lat: 29.89889
-          },{
-            seq: '5',
-            name: 'EEE控股集团有限公司',
-            rIndex: '96',
-            lon: 121.71624,
-            lat: 29.94899
-          },{
-            seq: '6',
-            name: 'FFF控股集团有限公司',
-            rIndex: '96',
-            lon: 121.40686,
-            lat: 29.65503
-          },{
-            seq: '7',
-            name: 'GGG控股集团有限公司',
-            rIndex: '96',
-            lon: 121.15435,
-            lat: 30.03711
-          },{
-            seq: '8',
-            name: 'HHH控股集团有限公司',
-            rIndex: '96',
-            lon: 121.26647,
-            lat: 30.16964
-          }],
-          riskWarnDataSecond: [{
-            seq: '1',
-            name: 'III控股集团有限公司',
-            rIndex: '76',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '2',
-            name: 'JJJ控股集团有限公司',
-            rIndex: '76',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '3',
-            name: 'KKK控股集团有限公司',
-            rIndex: '76',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '4',
-            name: 'LLL控股集团有限公司',
-            rIndex: '76',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '5',
-            name: 'MMM控股集团有限公司',
-            rIndex: '76',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '6',
-            name: 'NNN控股集团有限公司',
-            rIndex: '76',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '7',
-            name: 'PPP控股集团有限公司',
-            rIndex: '76',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '8',
-            name: 'QQQ控股集团有限公司',
-            rIndex: '76',
-            lon: 121.55084,
-            lat: 29.85957
-          }],
-          riskWarnDataThird: [{
-            seq: '1',
-            name: 'RRR控股集团有限公司',
-            rIndex: '36',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '2',
-            name: 'SSS控股集团有限公司',
-            rIndex: '36',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '3',
-            name: 'TTT控股集团有限公司',
-            rIndex: '36',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '4',
-            name: 'UUU控股集团有限公司',
-            rIndex: '36',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '5',
-            name: 'VVV控股集团有限公司',
-            rIndex: '36',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '6',
-            name: 'WWW控股集团有限公司',
-            rIndex: '36',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '7',
-            name: 'XXX控股集团有限公司',
-            rIndex: '36',
-            lon: 121.55084,
-            lat: 29.85957
-          },{
-            seq: '8',
-            name: 'YYY控股集团有限公司',
-            rIndex: '36',
-            lon: 121.55084,
-            lat: 29.85957
-          }],
+          riskWarnData: [],
+          riskWarnDataSecond: [],
+          riskWarnDataThird: [],
           activeTab: 'first',
-          instituInp: ''
+          instituInp: '',
+          pageNum: 1,
+          pageSize: 10,
+          loading: true,
         }
       },
       methods: {
-        changeRegion(regionOption){
-          loadMap(this, regionOption);
+        indexMethod(index) {
+          return this.pageSize * (this.pageNum - 1) + index + 1;
         },
-        loadMapByInstit: function(event) {
+        loadMapByCriteria: function(event) {
+          let warningLevel = '高风险';
+          if (this.activeTab == "second")
+            warningLevel = "中风险";
+          if (this.activeTab == "third")
+            warningLevel = "低风险";
+          let mapParams = {companyName:this.instituInp,
+            area: this.regionOption,
+            warningLevel:warningLevel,
+          };
+          this.getCompanyList(mapParams);
           loadMap(this);
         },
+        /**
+         * 定位单个标注点
+         * **/
         loadMapByOnePoint (row){
-          let lonLatArr = [[row.lon, row.lat, row.name, row.rIndex]];
-          let lon = row.lon, lat = row.lat;
+          if (row.longitude==null || row.latitude==null) {
+            this.openAlert();
+            return false;
+          }
+          let lonLatInfo = [{longitude:row.longitude,
+            latitude: row.latitude,
+            companyName: row.companyName,
+            riskIndex:(row.riskWave==null?'':row.riskWave.riskIndex)
+          }];
+          let lon = row.longitude, lat = row.latitude;
           let regionId = document.getElementById("regionIdSelected").value;//区域id
-          this.$emit('sear-map',lonLatArr, regionId, lon, lat);
+          this.$emit('sear-map',lonLatInfo, regionId, lon, lat);
         },
         handleClick(tab, event) {
           console.log(tab, event);
+          console.log(this.activeTab);
+          this.loadMapByCriteria(event);
+        },
+        openAlert() {
+          this.$alert('无经度或纬度数据', '机构定位错误', {
+            confirmButtonText: '确定',
+            /*callback: action => {
+              this.$message({
+                type: 'info',
+                message: `action: ${ action }`
+              });
+            }*/
+          });
+        },
+        /**
+         * 获取机构列表
+         * **/
+        getCompanyList(mapParams) {
+          Ajax({
+            method:'post',
+            url:'company/getList',
+            data: {
+              companyName: mapParams.companyName,
+              area: mapParams.area,
+              warningLevel:mapParams.warningLevel,
+              pageNum: 1,
+              pageSize: 10
+            }
+          }).then(result => {
+              console.log("从后台获取的数据：");
+              console.log(result);
+
+              datalist = result.data.data.list;
+              console.log(datalist);
+              this.riskWarnData = datalist;
+              loadMap(this);
+              this.loading = false;
+            }
+
+          ).catch(err => {
+            alert("错误：获取数据异常" + err);
+          });
         }
       }
     }
@@ -378,44 +322,41 @@
 
       let institution = document.getElementById("institutionInp").value;//机构查询条件
 
-      let lonLatArr = [[121.577873, 29.97303, 'AAA控股集团有限公司', 96],
-        [121.536873, 29.97503, 'BBB控股集团有限公司', 96],
-        [121.596073, 29.96303, 'CCC控股集团有限公司', 96],
-        [121.619873, 29.99303, 'DDD控股集团有限公司', 96],
-        [121.587873, 29.90303, 'EEE控股集团有限公司', 96],
-        [121.637873, 29.99303, 'FFF控股集团有限公司', 96],
-        [121.636003, 29.90503, 'GGG控股集团有限公司', 96],
-        [121.656003, 29.91303, 'HHH控股集团有限公司', 96],
-        [121.699873, 29.70303, 'III控股集团有限公司', 96],
-        [121.667873, 29.80303, 'JJJ控股集团有限公司', 96]
-      ];
-      if (institution!="") {
-        lonLatArr = [[121.577873, 29.97303, 'AAA控股集团有限公司', 96]];
+      let dataList = obj.riskWarnData;
+      let lonLatInfo = [];
+      for (let i=0; i<dataList.length; i++) {
+        const item = {
+          longitude: dataList[i].longitude,
+          latitude: dataList[i].latitude,
+          companyName: dataList[i].companyName,
+          riskIndex: (dataList[i].riskWave==null?'':dataList[i].riskWave.riskIndex)
+        };
+        lonLatInfo.push(item);
       }
 
       let lon = 121.84431, lat = 29.89889;
-      if (regionId == "1")
+      if (regionId == "海曙区")
         lon = 121.55084, lat = 29.85957;
-      else if (regionId == "2")
+      else if (regionId == "鄞州区")
         lon = 121.547, lat = 29.8172;
-      else if (regionId == "3")
+      else if (regionId == "江北区")
         lon = 121.55468, lat = 29.88615;
-      else if (regionId == "4")
+      else if (regionId == "北仑区")
         lon = 121.84431, lat = 29.89889;
-      else if (regionId == "5")
+      else if (regionId == "镇海区")
         lon = 121.71624, lat = 29.94899;
-      else if (regionId == "6")
+      else if (regionId == "奉化区")
         lon = 121.40686, lat = 29.65503;
-      else if (regionId == "7")
+      else if (regionId == "余姚市")
         lon = 121.15435, lat = 30.03711;
-      else if (regionId == "8")
+      else if (regionId == "慈溪市")
         lon = 121.26647, lat = 30.16964;
-      else if (regionId == "9")
+      else if (regionId == "宁海")
         lon = 121.420059, lat = 29.336821;
-      else if (regionId == "10")
+      else if (regionId == "象山")
         lon = 121.879829, lat = 29.472589;
 
-      obj.$emit('sear-map',lonLatArr, regionId, lon, lat);
+      obj.$emit('sear-map',lonLatInfo, regionId, lon, lat);
     }
 
 </script>

@@ -101,16 +101,16 @@
         });
         map.addControl(geolocationControl);
 
-        let lonLatArr = markPointInfo;
-        for(let i=0; i<lonLatArr.length; i++) {
+        // let lonLatArr = markPointInfo;
+        for(let i=0; i<markPointInfo.length; i++) {
           let opts = {
             width : 250,     // 信息窗口宽度
             height: 50,     // 信息窗口高度
-            title : markPointInfo[i][2] , // 信息窗口标题
+            title : markPointInfo[i].companyName , // 信息窗口标题
             enableMessage:true//设置允许信息窗发送短息
           };
-          let content = "风险指数："+markPointInfo[i][3];
-          let pointMark = new BMap.Point(lonLatArr[i][0], lonLatArr[i][1]);
+          let content = "风险指数："+markPointInfo[i].riskIndex;
+          let pointMark = new BMap.Point(markPointInfo[i].longitude, markPointInfo[i].latitude);
           let marker = new BMap.Marker(pointMark);
           map.addOverlay(marker);
           marker.addEventListener("click",function(e){
@@ -119,9 +119,9 @@
             let infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
             map.openInfoWindow(infoWindow,point); //开启信息窗口
           });
-          if (lonLatArr.length == 1) {
+          if (markPointInfo.length == 1) {
             console.log("单点定位...");
-            let point = new BMap.Point(lonLatArr[i][0], lonLatArr[i][1]);
+            let point = new BMap.Point(markPointInfo[0].longitude, markPointInfo[0].latitude);
             let infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
             map.openInfoWindow(infoWindow,point); //开启信息窗口
           }

@@ -4,7 +4,8 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {
-    isCollapse: false  //侧边栏展开状态
+    isCollapse: false,  //侧边栏展开状态
+    userdepartmentId: ''
 }
 
 const mutations = {

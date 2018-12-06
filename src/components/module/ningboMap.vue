@@ -1,6 +1,7 @@
 <template lang="html">
 <div class="x-body-right">
     <div class="x-body-right-container">
+        <el-button size="small" type="primary" style="float: right;"  @click="updateMap">返回</el-button>
         <div class="x-body-toolbar xx-option-right-title"></div>
         <div :class="['x-body-toolbar','xx-option-risk', isRiskDisplayMode ? 'xx-active' : '']" @click="changeDisplayMode('risk')"></div>
         <div :class="['x-body-toolbar','xx-option-count', !isRiskDisplayMode ? 'xx-active' : '']" @click="changeDisplayMode('count')"></div>
@@ -36,6 +37,7 @@ export default {
         changeDisplayMode: function (mode) {
             // 由于显示模式是从父组件取值，所以修改时也需要从父组件修改
             this.$emit('listenerChangeDisplayMode', mode);
+
         },
         /**
          * 刷新地图
@@ -46,7 +48,11 @@ export default {
             } else {
                 MapNingbo.refreshCount(this.regions);
             }
-        }
+        },
+      updateMap(){
+        this.refreshMap();
+        this.$emit("toCity");
+      }
     },
     computed: {
         isRiskDisplayMode: function () {

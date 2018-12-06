@@ -6,7 +6,12 @@ const login = r => require.ensure([], () => r(require('@/components/page/login')
 const index = r => require.ensure([], () => r(require('@/components/page/index')), 'index');
 const Monitor = r => require.ensure([], () => r(require('@/components/common/Monitor')), 'Monitor');  //监测中心导航公共部分
 const skymonitoring = r => require.ensure([], () => r(require('@/components/page/Monitor/Risk/SkyMonitoring')), 'skymonitoring');  //天罗监测
+const groundMonitoring = r => require.ensure([], () => r(require('@/components/page/Monitor/Risk/GroundMonitoring')), 'groundMonitoring');  //地网监测
+const riskMonitoring = r => require.ensure([], () => r(require('@/components/page/Monitor/Risk/RiskMonitoring')), 'riskMonitoring');  //风险监测
+const groundMonitoringDetail = r => require.ensure([], () => r(require('@/components/page/Monitor/Risk/GroundMonitoringDetail')), 'groundMonitoringDetail');  //地网监测
 const informationRetrieval = r => require.ensure([], () => r(require('@/components/page/Monitor/Overall/InformationRetrieval')), 'informationRetrieval');  //信息检索
+const executivesDetails = r => require.ensure([], () => r(require('@/components/page/Monitor/Overall/InformationRetrieval/ExecutivesDetails')), 'informationRetrieval');  //高管详情
+const PlatformDetails = r => require.ensure([], () => r(require('@/components/page/Monitor/Overall/InformationRetrieval/PlatformDetails')), 'informationRetrieval');  //平台详情
 const situationalAwareness = r => require.ensure([], () => r(require('@/components/page/Monitor/Overall/SituationalAwareness')), 'situationalAwareness');  //态势感知
 const hjMap = r => require.ensure([], () => r(require('@/components/page/Monitor/Overall/HjMap')), 'hjMap');  //互金地图
 const relatedState = r => require.ensure([], () => r(require('@/components/page/Monitor/Relation/relatedState')), 'relatedState');  //关联态势
@@ -37,6 +42,23 @@ const meetingDetail = r => require.ensure([], () => r(require('@/components/page
 const waitDisposedList = r => require.ensure([], () => r(require('@/components/page/Monitor/Warn/waitDisposedList')), 'waitDisposedList');  //待处置机构列表
 const disposedDetail = r => require.ensure([], () => r(require('@/components/page/Monitor/Warn/disposedOrg/disposedDetail')), 'disposedDetail');  //待处置机构详情
 const focusAttention = r => require.ensure([], () => r(require('@/components/page/Monitor/Warn/focusAttention')), 'focusAttention');  //重点关注
+const Message = r => require.ensure([], () => r(require('@/components/common/Message')), 'Message');  //消息中心导航公共部分
+const inform = r => require.ensure([], () => r(require('@/components/page/Message/inform')), 'inform');  //通知
+const publicityEducation = r => require.ensure([], () => r(require('@/components/page/Message/publicityEducation')), 'publicityEducation');  //宣传教育
+const policiesRegulations = r => require.ensure([], () => r(require('@/components/page/Message/policiesRegulations')), 'policiesRegulations');  //法律法规
+const workMechanism = r => require.ensure([], () => r(require('@/components/page/Message/workMechanism')), 'workMechanism');  //工作机制
+const meetingNotice = r => require.ensure([], () => r(require('@/components/page/Message/meetingNotice')), 'meetingNotice');  //会议通知
+const workReports = r => require.ensure([], () => r(require('@/components/page/Message/workReports')), 'workReports');  //工作简报
+const caseReport = r => require.ensure([], () => r(require('@/components/page/Message/caseReport')), 'caseReport');  //案情通报
+const taskManager = r => require.ensure([], () => r(require('@/components/page/Message/taskManager')), 'taskManager');  //任务提醒
+const informDetails = r => require.ensure([], () => r(require('@/components/page/Message/informDetails')), 'informDetails');  //通知详情
+
+const DataCenter = r => require.ensure([], () => r(require('@/components/common/DataCenter')), 'DataCenter');  //大数据中心导航公共部分
+const departmentalSupervision = r => require.ensure([], () => r(require('@/components/page/DataCenter/departmentalSupervision')), 'departmentalSupervision');//部门监测
+
+const messageDetails = r => require.ensure([], () => r(require('@/components/page/Message/messageDetails')), 'messageDetails');  //消息详情
+
+
 
 
 const router = new Router({
@@ -55,7 +77,7 @@ const router = new Router({
       //监测中心板块
       path: '/Monitor',
       name: 'Monitor',
-      component: Monitor,
+      component:Monitor ,
       children:[
         {
           path: '/',
@@ -71,6 +93,16 @@ const router = new Router({
           path: '/hjMap',
           component: hjMap,
           meta: { title: '互金地图' }
+        },
+        {
+          path: '/executivesDetails',
+          component: executivesDetails,
+          meta: { title: '信息检索' }
+        }
+        ,{
+          path: '/PlatformDetails',
+          component: PlatformDetails,
+          meta: { title: '信息检索' }
         },
         {
           path: '/relatedState',
@@ -96,6 +128,20 @@ const router = new Router({
           path: '/skymonitoring',
           component: skymonitoring,
           meta: { title: '天罗监测' }
+        },
+        {
+          path: '/groundMonitoring',
+          component: groundMonitoring,
+          meta: { title: '地网监测' }
+        }, {
+          path: '/riskMonitoring',
+          component: riskMonitoring,
+          meta: { title: '风险监测' }
+        },
+        {
+          path: '/groundMonitoringDetail',
+          component: groundMonitoringDetail,
+          meta: { title: '地网监测详情' }
         },
         {
           path: '/warningOrg',
@@ -193,6 +239,79 @@ const router = new Router({
           meta: { title: '风险已处置详情' }
         },
 
+      ]
+    },
+    {
+      //大数据中心板块
+      path: '/DataCenter',
+      name: 'DataCenter',
+      component: DataCenter,
+      children:[
+        {
+          path: '/',
+          component: departmentalSupervision,
+          meta: { title: '部门监测' }
+        },
+
+      ]
+    },
+    {
+      //消息中心板块
+      path: '/Message',
+      name: 'Message',
+      component: Message,
+      children:[
+        {
+          path: '/',
+          component: inform,
+          meta: { title: '通知' }
+        },
+
+        {
+          path: '/informDetails',
+          component: informDetails,
+          meta: { title: '通知详情' }
+        },
+        {
+          path: '/messageDetails',
+          component: messageDetails,
+          meta: { title: '消息详情' }
+        },
+        {
+          path: '/publicityEducation',
+          component: publicityEducation,
+          meta: { title: '宣传教育' }
+        },
+        {
+          path: '/policiesRegulations',
+          component: policiesRegulations,
+          meta: { title: '法律法规' }
+        },
+        {
+          path: '/workMechanism',
+          component: workMechanism,
+          meta: { title: '工作机制' }
+        },
+        {
+          path: '/meetingNotice',
+          component: meetingNotice,
+          meta: { title: '会议通知' }
+        },
+        {
+          path: '/workReports',
+          component: workReports,
+          meta: { title: '工作简报' }
+        },
+        {
+          path: '/caseReport',
+          component: caseReport,
+          meta: { title: '案情通报' }
+        },
+        {
+          path: '/taskManager',
+          component: taskManager,
+          meta: { title: '任务提醒' }
+        }
       ]
     }
   ]

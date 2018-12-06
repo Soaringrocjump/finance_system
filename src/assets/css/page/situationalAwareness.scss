@@ -405,6 +405,10 @@
       margin-top: 16px;
       .col-left {
         text-align: right;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 16px;
       }
       .col-mid {
         padding: 5px 0px 5px 10px;
@@ -449,9 +453,11 @@
         }
       }
       #ningboMap{
+        width: 100%;
+        height: 100%;
+        min-height: 600px;
         position: relative;
         padding: 25px;
-        height: 600px;
       }
     }
     .iob_right{

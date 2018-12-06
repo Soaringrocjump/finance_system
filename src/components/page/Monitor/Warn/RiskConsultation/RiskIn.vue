@@ -1,75 +1,66 @@
+  <!-- 会商中列表 created by zp -->
 <template>
-  <div class="risk_body" style="overflow-y: scroll;">
-
+  <div class="risk_body">
     <el-table :data="tableData" style="width: 100%" :header-cell-style="headerCellStyle" :row-style="rowStyle" :cell-style="cellStyle" :default-sort="{prop: 'date', order: 'descending'}">
       <el-table-column  type="index" :index="indexMethod" label="序号" width="75" ></el-table-column>
-      <el-table-column  prop="companyName" label="机构名称" width="380" >
+      <el-table-column  prop="companyName" label="机构名称" min-width="230" >
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small" style="text-decoration: underline;cursor: pointer;color: #333;">
+          <el-button @click="toDetails(scope.row)" type="text" size="small" style="text-decoration: underline;cursor: pointer;color: #333;">
             {{scope.row.companyName}}
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="companyStatus"
-        label="运营状态"
-        width="130">
+      <el-table-column prop="companyStatus" label="运营状态" min-width="100">
           <template slot-scope="scope">
-            <el-tag :type="scope.row.company.status == '在运营' ? 'primary' : 'success'" disable-transitions>{{scope.row.company.status}}</el-tag>
+            {{scope.row.company.status}}
           </template>      
           </el-table-column>
-      <el-table-column prop="riskIndex" label="风险指数" sortable width="130">
+      <el-table-column  label="风险指数" sortable min-width="120">
+          <template slot-scope="scope">
+            <span v-if="scope.row.riskIndex > 85" class="danger">{{scope.row.riskIndex}}</span>
+            <span v-else-if="scope.row.riskIndex > 55" class="warning">{{scope.row.riskIndex}}</span>
+            <span v-else class="primary">{{scope.row.riskIndex}}</span>
+          </template>
+        </el-table-column>
+      <el-table-column prop="businessType" label="业务类型" min-width="100">
         <template slot-scope="scope">
-          {{scope.row.riskIndex}}
-          </template>
+          {{scope.row.company.businessType}}
+        </template>
       </el-table-column>
-      <el-table-column
-        prop="businessType"
-        label="业务类型"
-        width="130">
-      <template slot-scope="scope">
-            <el-tag :type="scope.row.company.businessType == '网络借贷' ? 'primary' : 'success'" disable-transitions>{{scope.row.company.businessType}}</el-tag>
-          </template>
-      </el-table-column>
-      <el-table-column
-        prop="area"
-        label="辖区归属"
-        width="130">
-      <template slot-scope="scope">
-            <el-tag :type="scope.row.company.area == '鄞州区' ? 'primary' : 'success'" disable-transitions>{{scope.row.company.area}}</el-tag>
-          </template>
-      </el-table-column>
-      <el-table-column prop="warningTime" label="预警时间" sortable width="130">
+      <el-table-column prop="area" label="辖区归属" min-width="100">
         <template slot-scope="scope">
-          {{scope.row.warningTime}}
+          {{scope.row.company.area}}
+        </template>
+      </el-table-column>
+      <el-table-column prop="warningTime" label="预警时间" sortable min-width="120">
+        <template slot-scope="scope">
+          {{scope.row.warningTime.substr(0,10)}}
           </template>
       </el-table-column>
-      <el-table-column prop="hsStatus" label="状态" sortable width="130">
+      <el-table-column prop="hsStatus" label="状态"  min-width="70">
          <template slot-scope="scope">
-          {{scope.row.status}}
+          <span class="primary">{{scope.row.status}}</span>
           </template>
       </el-table-column>
-      <el-table-column prop="jindu" label="进度" sortable width="130">
+      <el-table-column prop="jindu" label="进度"  min-width="60">
         <template slot-scope="scope">
           {{scope.row.hasBackRisk}}/{{scope.row.totalRisk}}
           </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" min-width="100">
         <template slot-scope="scope">
           <slot name="btn"></slot>
-          <el-button size="mini">会商</el-button>
-          <el-button size="mini">处置</el-button>
+          <el-button type="primary" size="mini">会商</el-button>
+          <el-button type="primary" size="mini">处置</el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      layout=" prev, pager, next ,jumper"
+    background
+    @current-change="handleCurrentChange"
+    layout="total,prev, pager, next"
     :total="pageData.total">
     </el-pagination>
-
     <div class="height60"></div>
   </div>
 </template>
@@ -89,10 +80,13 @@ export default {
     jinduFormatter(row, column, cellValue) {
       return row.offrate + "/" + row.allrate;
     },
-
-    handleClick(index) {
-      const uuid = index.uuid;
-      this.$router.push({ path: "/DisposeInDetails", query: { id: uuid } });
+    //跳机构详情
+    toDetails(row) {
+      console.log(row);
+      this.$router.push({
+        path: "/orgWarning",
+        query: { warningNo: row.warningNo }
+      });
     },
     //表格头部样式
     headerCellStyle({ row, column, rowIndex, columnIndex }) {
@@ -118,16 +112,10 @@ export default {
     indexMethod(index) {
       return this.pageData.pageSize * (this.pageData.pageNum - 1) + index + 1;
     },
-    //pageSize 改变时会触发
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.currentPage = 1;
-      this.getRiskInData(1, this.pageSize);
-    },
-    //currentPage 改变时会触发
+    //分页事件触发父组件请求
     handleCurrentChange(val) {
-      this.currentPage = val;
-      this.getRiskInData(val, this.pageSize);
+      // console.log(val);
+      this.$emit("changePage", val);
     }
   },
   mounted() {}

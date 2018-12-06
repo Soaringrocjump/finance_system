@@ -117,7 +117,7 @@ function createMapRegion(paper, region) {
                 if (el.data('x-type') == 'group') {
                     let regionName = el.data('name');
                     if (clickRegionName != regionName) {
-                        el.attr('fill', '#083157').attr('stroke', '#012444');
+                        el.attr('fill', '#083157').attr('stroke', '#fff');
                     } else {
                         el.attr('fill', '#46a0fc');
                     }
@@ -148,7 +148,7 @@ function createMapRegion(paper, region) {
 function refreshMapRiskData(regions) {
     mapNbPaper.forEach(function (el) {
         if (el.data('x-type') == 'group') {
-            el.attr('fill', RISK_COLORS[15]).attr('stroke', '#012444');
+            el.attr('fill', RISK_COLORS[15]).attr('stroke', '#fff');
         } else if(el.data('x-type') == 'text') {
             el.attr('fill', el.data('cache-fill'));
         }

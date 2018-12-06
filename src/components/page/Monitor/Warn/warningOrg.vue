@@ -1,4 +1,4 @@
-<!-- 预警机构 -->
+<!-- 预警机构 created by zp -->
 <template>
   <div class="warn-content warningOrg">
     <el-tabs v-model="activeName" class="warn_tab" type="border-card" @tab-click="tabClick">
@@ -6,11 +6,10 @@
         <table-module :tableData="warningList" :pageData="pageInfo" v-on:changePage="cutPage"></table-module>
       </el-tab-pane>
       <el-tab-pane label="核查中" name="second">
-        <table-module :tableData="warningList" :pageData="pageInfo" ></table-module>
+        <table-module :tableData="warningList" :pageData="pageInfo" v-on:changePage="cutPage"></table-module>
       </el-tab-pane>
       <el-tab-pane label="已核查" name="third">
-        <table-module :tableData="warningList" :pageData="pageInfo">
-          <el-button size="mini" slot="btn">会商</el-button>
+        <table-module :tableData="warningList" :pageData="pageInfo" v-on:changePage="cutPage">
         </table-module>
       </el-tab-pane>
     </el-tabs>
@@ -19,7 +18,7 @@
 
 <script>
 import tableModule from "./warningOrg/tableModule.vue";
-import Ajax from "@/components/common/util";
+
 export default {
   data() {
     return {
@@ -39,8 +38,8 @@ export default {
   methods: {
     // tab切换
     tabClick(tab, e) {
-      debugger;
-      this.getList(null, tab.label);
+      // debugger;
+      this.getList(1, tab.label);
       this.tabLabel = tab.label
     },
     //信息检索查询机构warning/query
@@ -50,15 +49,15 @@ export default {
         method: "post",
         url: this.HOME +"warning/query",
         headers: {
-          token: sessionStorage.getItem("authorization"),
           "content-type": "application/json;charset=UTF-8"
         },
-        data: JSON.stringify({
+        data: {
           userDeptId: user.departmentId,
           warnStatus: warnStatus || "预警中",
           pageNum: currentPage || this.pageInfo.pageNum,
-          pageSize: this.pageInfo.pageSize
-        })
+          pageSize: this.pageInfo.pageSize,
+
+        }
       })
         .then(result => {
           console.log(result);
@@ -69,25 +68,12 @@ export default {
 
           this.warningList = msg.list;
           this.pageInfo.total = msg.total;
-          let Cstatus = msg.list.company.status;
-          console.log(Cstatus)
         })
         .catch(err => {
           alert("错误：获取数据异常" + err);
         });
     },
-    // //pageSize 改变时会触发
-    // handleSizeChange(val) {
-    //   this.pageSize = val;
-    //   this.currentPage = 1;
-    //   this.getWarningData(1, this.pageSize);
-    // },
-    //currentPage 改变时会触发
-    handleCurrentChange(val) {
-      // this.currentPage = val;
-      console.log(val);
-      getList(val, this.tabLabel);
-    },
+    //获取子组件分页值重新请求数据
     cutPage(val){
       console.log(val);
       console.log(this.tabLabel);

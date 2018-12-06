@@ -1,5 +1,5 @@
 <template>
-  <div class="sm_body">
+  <div class="sm_body" style="overflow-y: scroll">
     <el-tabs type="border-card">
       <el-tab-pane label="机构名称">
         <institution></institution>

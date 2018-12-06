@@ -20,7 +20,7 @@
                     <li><router-link to="/">主页</router-link></li>
                     <li>日常工作</li>
                     <li>后台管理</li>
-                    <li class="active">监测管理</li>
+                    <li >监测管理</li>
                     <li>通知</li>
                     <li @click="exitLogin">退出</li>
                 </ul>
@@ -32,7 +32,8 @@
                 <div class="logoName">宁波市金融风险“天罗地网”监测防控系统</div>
             </div>
             <div class="header-right">
-                <div class="control"><i class="iconfont icon-icon--"></i> 消息中心</div>
+                <div class="control"><i class="iconfont icon-icon--"></i><router-link to="Message" >消息中心</router-link> </div>
+
                 <div class="control" ><i class="iconfont icon-shezhi2"></i> 后台管理</div>
                 <div class="control" @click="exitLogin"><i class="iconfont icon-shezhi2"></i> 退出登录</div>
             </div>

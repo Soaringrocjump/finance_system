@@ -5,7 +5,7 @@
         <div class="iob_left">
           <div class="title">累计平台业态类型分布</div>
           <div>
-            <div id="ytlxfbPie" style="width: 380px; height:100%; min-height: 500px;">
+            <div id="ytlxfbPie" style="width: 100%; height:100%; min-height: 500px;">
             </div>
           </div>
         </div>
@@ -14,10 +14,10 @@
         <div class="iob_right">
           <div class="title">
             <h3>平台上线消亡趋势</h3>
-            <span>2012/1/1-2018/8/31</span>
+            <span>{{dateBegin}}-{{dateEnd}}</span>
           </div>
           <div>
-            <div id="sxxwqsBar" style="width: 100%; height:100%; min-height: 500px;">
+            <div id="sxxwqsBar" style="width: 100%; height:100%; min-height: 500px; margin-top: 20px;">
             </div>
           </div>
 
@@ -29,9 +29,23 @@
 
 <script>
   import echarts from 'echarts';
-
+  import Ajax from "@/components/common/util";
+  let max = 0;
+  let min = 0;
+  let sj = [];
   export default {
     name: "Cumulative",
+    data(){
+      return{
+        pieList:[],
+        pieListTit:[],
+        barListTop:[],
+        barListBot:[],
+        dateBegin: '',
+        dateEnd: '',
+
+      }
+    },
     methods: {
       drawPie() {
         let pieOption = {
@@ -47,9 +61,7 @@
             orient: 'horizontal',
             bottom: '0',
             itemWidth: 14,
-            data: ['网络借贷','互联网基金销售','互联网资产管理','网络银行','互联网期货',
-              '互联网证券','交易所','网络众筹','门户导航','第三方支付',
-              '互联网保险','网络外汇','催收','互联网信托','互联网+X']
+            data: this.pieListTit
           },
           series : [
             {
@@ -58,23 +70,8 @@
               bottom: '0px',
               radius : '50%',
               center: ['50%', '40%'],
-              data:[
-                {value:82, name:'网络借贷'},
-                {value:27, name:'互联网基金销售'},
-                {value:21, name:'互联网资产管理'},
-                {value:11, name:'网络银行'},
-                {value:9, name:'互联网期货'},
-                {value:8, name:'互联网证券'},
-                {value:6, name:'交易所'},
-                {value:6, name:'网络众筹'},
-                {value:5, name:'门户导航'},
-                {value:4, name:'第三方支付'},
-                {value:4, name:'互联网保险'},
-                {value:3, name:'网络外汇'},
-                {value:3, name:'催收'},
-                {value:2, name:'互联网信托'},
-                {value:1, name:'互联网+X'},
-              ],
+              data:this.pieList
+              ,
               color:[
                 '#CC2D2D',
                 '#FFE066',
@@ -106,10 +103,26 @@
         let myPieChart = echarts.init(document.getElementById('ytlxfbPie'));
         myPieChart.setOption(pieOption);
       },
-      drawBar() {
+     /* drawBar() {
         let dataAll = [
-          [30,14,28,49,60,9,44,49,60,9,44,33,30,14,28,49,60,9,44,49,60,9,44,33,30,14,28,49,60,9,44,49,60,9,44,33,30,14,28,49,60,9,44,49,60,9,44,33],
-          [12,7,13,12,10,11,8,12,10,5,8,5,12,7,13,12,10,11,8,3,10,1,18,15,12,7,13,12,10,11,8,12,10,5,8,5,12,7,13,12,10,11,8,3,10,1,18,15]
+          [
+            30,14,28,49,60,9,44,49,60,9,44,33,
+            30,14,28,49,60,9,44,49,60,9,44,33,
+            30,14,28,49,60,9,44,49,60,9,44,33,
+            30,14,28,49,60,9,44,49,60,9,44,33,
+            30,14,28,49,60,9,44,49,60,9,44,33,
+            30,14,28,49,60,9,44,49,60,9,44,33,
+            30,14,28,49,60,9,44,49,60,9,44,33
+          ],
+          [
+            12,7,13,12,10,11,8,12,10,5,8,5,
+            12,7,13,12,10,11,8,3,10,1,18,15,
+            12,7,13,12,10,11,8,12,10,5,8,5,
+            12,7,13,12,10,11,8,3,10,1,18,15,
+            12,7,13,12,10,11,8,12,10,5,8,5,
+            12,7,13,12,10,11,8,3,10,1,18,15,
+            12,7,13,12,10,11,8,12,10,5,8,5,
+          ]
         ];
         let barOption = {
           color: ['#3398DB'],
@@ -124,14 +137,22 @@
             align: 'left',
           },
           grid: [
-            {x: '7%', y: '7%', width: '78%', height: '38%'},
+            {x: '7%', y: '7%', width: '88%', height: '38%'},
 
-            {x: '7%', y2: '12.3%', width: '78%', height: '38%', bottom: '46px'},
+            {x: '7%', y2: '12.3%', width: '88%', height: '38%', bottom: '46px'},
 
           ],
           xAxis : [
             {gridIndex: 0,
-              data : ['','','','','','6','','','','','','12','','','','','','6','','','','','','12','','','','','','6','','','','','','12','','','','','','6','','','','','','12'],
+              data : [
+                '','','','','2012-5','2012-6','','','','','','12',
+                '','','','','','6','','','','','','12',
+                '','','','','','6','','','','','','12',
+                '','','','','','6','','','','','','12',
+                '','','','','','6','','','','','','12',
+                '','','','','','6','','','','','','12',
+                '','','','','','6','','','','','','12'
+              ],
               axisLabel:{
                 show:true,
                 interval:0,
@@ -142,12 +163,21 @@
 
               },
               nameGap:'50',
+              boundaryGap: false,
             },
             {gridIndex: 1,
-              data : ['2012','2012','2012','2012','2012','2012','2012','2012','2012','2012','2012','2012','2013','2012','2012','2012','2012','2012','2012','2012','2012','2012','2012','2012','2014','2012','2012','2012','2012','2012','2012','2012','2012','2012','2012','2012','2015','2012','2012','2012','2012','2012','2012','2012','2012','2012','2012','2012'],
+              data : [
+                '','','','','','2012-6','','','','','','',
+                '','','','','','2013','','','','','','',
+                '','','','','','2014','','','','','','',
+                '','','','','','2015','','','','','','',
+                '','','','','','2016','','','','','','',
+                '','','','','','2017','','','','','','',
+                '','','','','','2018','','','','','',''
+              ],
               axisLabel:{
                 show:true,
-                interval:11,
+                interval:0,
                 margin: 8
               },
               axisTick: {
@@ -158,6 +188,7 @@
               nameLocation:'middle',
               position: 'top',
               barGap: '100%',
+              boundaryGap: false
             },
           ],
           yAxis : [
@@ -179,7 +210,7 @@
                       {offset: 0, color: '#38C4FF'}
                     ]
                   )}},
-              barWidth:10,
+              barWidth:'80%',
 
               label: {
                 normal: {
@@ -201,7 +232,7 @@
                       {offset: 0, color: '#FF893A'}
                     ]
                   )}},
-              barWidth:10,
+              barWidth:'80%',
               label: {
                 normal: {
                   show: false,
@@ -213,11 +244,270 @@
         };
         let myBarChart = echarts.init(document.getElementById('sxxwqsBar'));
         myBarChart.setOption(barOption);
-      }
+      },*/
+       drawBar() {
+         let barOption = {
+           color: ['#38C4FF', '#FF893A'],
+           legend: {
+             data: ['新增', '消亡'],
+             align: 'center',
+             //left: 10,
+             textStyle: {
+               color: "#d7d7d7"
+             }
+           },
+           xAxis: [
+             {
+               type: 'category',
+               axisLine: {lineStyle: {color: '#fff'}},
+               data: sj,
+             },
+             {
+               gridIndex: 1,
+               type: 'category',
+               axisLine: {lineStyle: {color: '#fff'}},
+               data: sj,
+               position: 'top',
+               axisLabel: {
+                 show: false
+               }
+             }
+           ],
+           yAxis: [
+             {
+               name: '上\n\n线\n\n平\n\n台\n\n量',
+               type: 'value',
+               nameLocation: 'middle',
+               nameRotate: '0',
+               max: max,
+               nameGap: 50,
+               nameTextStyle: {
+                 fontSize: 20,
+                 color:'#000'
+               },
+               splitLine: {
+                 show: false,
+               },
+               axisLine: {lineStyle: {color: '#38C4FF'}},
+//						axisLine:{
+//							show: false,
+//						}
+               //splitArea: {show: false},
+//					axisLabel:{
+//						color:"#fff"
+//					}
+             },
+             {
+               show: false,
+               name: '比率(%)',
+               type: 'value',
+               nameTextStyle: {
+                 fontSize: 20,
+               },
+               splitLine: {show: false},
+               axisLine: {lineStyle: {color: '#fff'}},
+//						axisLine:{
+//							show: false,
+//						}
+//						axisLine:{lineStyle:{color:'#fff'}}
+             },
+             {
+               gridIndex: 1,
+               name: '消\n\n亡\n\n平\n\n台\n\n量',
+               type: 'value',
+               nameLocation: 'middle',
+               nameRotate: '0',
+               max: min,
+               nameGap: 50,
+               nameTextStyle: {
+                 fontSize: 20,
+                 color:'#000'
+               },
+               type: 'value',
+               inverse: true,
+               splitLine: {
+                 show: false,
+               },
+               axisLine: {lineStyle: {color: '#38C4FF'}},
+//						axisLine:{
+//							show: false,
+//						}
+               //splitArea: {show: false},
+//						axisLabel:{
+//							color:"#fff"
+//						}
+             },
+             {
+               show: false,
+               gridIndex: 1,
+               name: '比率(%)',
+               nameTextStyle: {
+                 fontSize: 20,
+               },
+               splitLine: {show: false},
+               axisLine: {
+                 show: false,
+               },
+//						axisLine:{lineStyle:{color:'#fff'}},
+               type: 'value',
+               inverse: true
+             }
+           ],
+           grid:
+             [
+               /*{
+               left: '8%',
+               right: '10%',
+               height: '40%',
+               bottom: '52%'
+             }, {
+               left: '8%',
+               right: '10%',
+               top: '51%',
+               height: '40%'
+             },*/
+               {x: '12%', y: '7%', width: '83%', height: '38%'},
+               {x: '12%', y2: '12.3%', width: '83%', height: '38%', bottom: '56px'},
+//					{
+//						left: '15%'
+//
+//					},
+           ],
+
+           textStyle: {
+             color: "#333"
+
+           },
+           tooltip : {
+             trigger: 'axis',
+             axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+               type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+             }
+           },
+           series: [
+
+             {
+               name: '新增平台',
+               type: 'bar',
+               symbolSize: 8,
+               hoverAnimation: false,
+               data: this.barListTop
+             }
+             ,
+             {
+               name: '消亡平台',
+               type: 'bar',
+               xAxisIndex: 1,
+               yAxisIndex: 2,
+               symbolSize: 8,
+               hoverAnimation: false,
+               data: this.barListBot
+             }
+
+
+           ],
+           dataZoom: [
+             {
+               show: true,
+               start: 0,
+               end: 100,
+               realtime: true,
+               height: 20,
+               xAxisIndex: [0, 1],
+             },
+             {
+               type: 'inside',
+               realtime: true,
+               start: 0,
+               end: 100,
+               xAxisIndex: [0, 1],
+             },
+           ]
+         };
+         let myBarChart = echarts.init(document.getElementById('sxxwqsBar'));
+         myBarChart.setOption(barOption);
+       },
+      getPieList(){
+          Ajax(
+            {
+              method:'post',
+              url:'count/goldBusinessTypeList',
+            }
+          ).then(result => {
+
+            if (result.data.resultCode != "200") alert("错误：" + msg.message);
+            var msg = !this.$common.isNull(result.data.data)
+              ? result.data.data
+              : "";
+
+              for (let i=0;i<msg.length;i++){
+                this.pieListTit.push(msg[i].businessType);
+                this.pieList.push({value:msg[i].amount ,name: msg[i].businessType});
+
+              }
+
+            this.drawPie();
+          })
+            .catch(err => {
+              alert("错误：获取数据异常" + err);
+            });
+
+      },
+      getBarList(){
+         sj = [];
+        Ajax(
+          {
+            method:'post',
+            url:'countMonth/onlineAndDeadList',
+          }
+        ).then(result => {
+
+          if (result.data.resultCode != "200") alert("错误：" + msg.message);
+          var msg = !this.$common.isNull(result.data.data)
+            ? result.data.data
+            : "";
+
+          this.dateBegin = msg[0].countTime.replace(/-0/g,"/").replace(/-/g,"/");
+          this.dateEnd = msg[msg.length-1].countTime.replace(/-0/g,"/").replace(/-/g,"/");
+
+          sj.push(msg[0].countTime);
+          for (let i=1;i<msg.length;i++){
+            if (msg[i].countTime.substring(0,7) != msg[i-1].countTime.substring(0,7)){
+              sj.push(msg[i].countTime);
+            }
+          }
+
+          for (let i=0;i<msg.length;i++){
+
+            if(msg[i].onlineAndDead=='上线平台量'){
+
+              this.barListTop.push({value:msg[i].monthTotal ,name: msg[i].countTime});
+              if (msg[i].monthTotal > max){
+                max = msg[i].monthTotal;
+              }
+            }
+            else{
+              this.barListBot.push({value:msg[i].monthTotal ,name: msg[i].countTime});
+              if (msg[i].monthTotal > min){
+                min = msg[i].monthTotal;
+              }
+            }
+          }
+          console.log(this.barListTop);
+          console.log(this.barListTop);
+          this.drawBar();
+        })
+          .catch(err => {
+            alert("错误：获取数据异常" + err);
+          });
+
+      },
     },
+
     mounted(){
-      this.drawPie();
-      this.drawBar();
+
+      this.getPieList();
+      this.getBarList();
     }
   }
 </script>
